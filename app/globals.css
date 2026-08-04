@@ -1,26 +1,143 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-fraunces);
+  --color-brand-blue-50: var(--brand-blue-50);
+  --color-brand-blue-100: var(--brand-blue-100);
+  --color-brand-blue-200: var(--brand-blue-200);
+  --color-brand-blue-300: var(--brand-blue-300);
+  --color-brand-blue-400: var(--brand-blue-400);
+  --color-brand-blue-500: var(--brand-blue-500);
+  --color-brand-blue-600: var(--brand-blue-600);
+  --color-brand-blue-700: var(--brand-blue-700);
+  --color-brand-blue-800: var(--brand-blue-800);
+  --color-brand-blue-900: var(--brand-blue-900);
+  --color-surface-alt: var(--surface-alt);
+  --text-display-1: clamp(2.75rem, 2.1rem + 3vw, 4.5rem);
+  --text-display-1--line-height: 1.05;
+  --text-display-1--letter-spacing: -0.02em;
+  --text-display-2: clamp(2.25rem, 1.8rem + 2vw, 3.25rem);
+  --text-display-2--line-height: 1.1;
+  --text-display-2--letter-spacing: -0.02em;
+  --text-display-3: clamp(1.75rem, 1.5rem + 1.1vw, 2.375rem);
+  --text-display-3--line-height: 1.15;
+  --text-display-3--letter-spacing: -0.01em;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* Institutional blue scale, sampled directly from the Gestão logo (public/logo.png,
+     dominant pixel color #009cd9) — this is the real brand color, not an approximation. */
+  --brand-blue-50: #ebf9ff;
+  --brand-blue-100: #cdf1fe;
+  --brand-blue-200: #96e1fd;
+  --brand-blue-300: #5ad1fc;
+  --brand-blue-400: #1ec0fa;
+  --brand-blue-500: #049dd4;
+  --brand-blue-600: #0481af;
+  --brand-blue-700: #03678c;
+  --brand-blue-800: #024e69;
+  --brand-blue-900: #02374b;
+
+  --background: #0a0a0b;
+  --foreground: #fafafa;
+  --surface-alt: #0d0f13;
+  --card: #131316;
+  --card-foreground: #fafafa;
+  --popover: #131316;
+  --popover-foreground: #fafafa;
+  --primary: var(--brand-blue-500);
+  --primary-foreground: #ffffff;
+  --secondary: #18181b;
+  --secondary-foreground: #fafafa;
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
+  --accent: var(--brand-blue-900);
+  --accent-foreground: #fafafa;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 15%);
+  --ring: var(--brand-blue-500);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.75rem;
+  --sidebar: #131316;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: var(--brand-blue-500);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #18181b;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: rgb(255 255 255 / 10%);
+  --sidebar-ring: var(--brand-blue-500);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Base band vs. a subtly elevated band — the only variation on this single-theme
+     dark site, used to create rhythm between stacked sections without ever going light. */
+  .section-dark {
+    @apply bg-background text-foreground transition-colors;
+  }
+  .section-alt {
+    background-color: var(--surface-alt);
+    @apply text-foreground transition-colors;
+  }
 }
