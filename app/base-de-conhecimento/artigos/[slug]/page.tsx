@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/motion/reveal";
-import { kbArticles, getArticleBySlug } from "@/data/knowledge-base/articles";
-import { getCategoryBySlug } from "@/data/knowledge-base/categories";
+import { db } from "@/lib/db/client";
+import { articles } from "@/lib/db/schema";
 
-export function generateStaticParams() {
-  return kbArticles.map((article) => ({ slug: article.slug }));
+async function getPublishedArticle(slug: string) {
+  return db.query.articles.findFirst({
+    where: and(eq(articles.slug, slug), eq(articles.status, "published")),
+    with: { category: true },
+  });
 }
 
 export async function generateMetadata({
@@ -19,7 +23,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getPublishedArticle(slug);
   if (!article) return {};
 
   return {
@@ -34,13 +38,11 @@ export default async function ArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getPublishedArticle(slug);
 
   if (!article) {
     notFound();
   }
-
-  const category = getCategoryBySlug(article.categorySlug);
 
   return (
     <section className="section-alt pt-20 pb-24 md:pt-28 md:pb-32">
@@ -57,7 +59,7 @@ export default async function ArticlePage({
           </Reveal>
 
           <Reveal delay={0.05} className="mt-6 flex flex-wrap items-center gap-3">
-            {category && <Badge variant="secondary">{category.name}</Badge>}
+            {article.category && <Badge variant="secondary">{article.category.name}</Badge>}
             <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Calendar className="size-3.5" />
               Atualizado em{" "}

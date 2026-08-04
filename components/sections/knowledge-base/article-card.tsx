@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { KBArticle } from "@/data/knowledge-base/articles";
+import type { Article } from "@/lib/db/schema";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", {
@@ -12,7 +12,7 @@ function formatDate(iso: string) {
   });
 }
 
-export function ArticleCard({ article }: { article: KBArticle }) {
+export function ArticleCard({ article }: { article: Article }) {
   return (
     <Link href={`/base-de-conhecimento/artigos/${article.slug}`}>
       <Card className="group h-full border-border/70 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">

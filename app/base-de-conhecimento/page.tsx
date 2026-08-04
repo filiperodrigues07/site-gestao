@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { eq } from "drizzle-orm";
 import { Container } from "@/components/shared/container";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { KnowledgeBaseExplorer } from "@/components/sections/knowledge-base/knowledge-base-explorer";
@@ -8,11 +9,8 @@ import { VideoGrid } from "@/components/sections/knowledge-base/video-grid";
 import { DownloadsList } from "@/components/sections/knowledge-base/downloads-list";
 import { Reveal } from "@/components/motion/reveal";
 import { RevealGroup } from "@/components/motion/reveal-group";
-import { kbCategories } from "@/data/knowledge-base/categories";
-import { kbArticles } from "@/data/knowledge-base/articles";
-import { faqs } from "@/data/knowledge-base/faqs";
-import { kbVideos } from "@/data/knowledge-base/videos";
-import { kbDownloads } from "@/data/knowledge-base/downloads";
+import { db } from "@/lib/db/client";
+import { articles as articlesTable } from "@/lib/db/schema";
 
 export const metadata: Metadata = {
   title: "Base de Conhecimento",
@@ -26,6 +24,18 @@ export default async function BaseDeConhecimentoPage({
   searchParams: Promise<{ categoria?: string }>;
 }) {
   const { categoria } = await searchParams;
+
+  const [kbCategories, kbArticles, faqs, kbVideos, kbDownloads] = await Promise.all([
+    db.query.categories.findMany({ orderBy: (c, { asc }) => asc(c.name) }),
+    db.query.articles.findMany({
+      where: eq(articlesTable.status, "published"),
+      orderBy: (a, { desc }) => desc(a.updatedAt),
+      with: { category: true },
+    }),
+    db.query.faqs.findMany({ orderBy: (f, { asc }) => asc(f.id) }),
+    db.query.videos.findMany({ orderBy: (v, { asc }) => asc(v.id) }),
+    db.query.downloads.findMany({ orderBy: (d, { desc }) => desc(d.createdAt) }),
+  ]);
 
   return (
     <>

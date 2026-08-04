@@ -4,13 +4,13 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import type { FAQItem } from "@/data/knowledge-base/faqs";
+import type { FAQ } from "@/lib/db/schema";
 
-export function FAQAccordion({ faqs }: { faqs: FAQItem[] }) {
+export function FAQAccordion({ faqs }: { faqs: FAQ[] }) {
   return (
     <Accordion className="mx-auto max-w-3xl">
       {faqs.map((faq) => (
-        <AccordionItem key={faq.id} value={faq.id}>
+        <AccordionItem key={faq.id} value={String(faq.id)}>
           <AccordionTrigger className="text-base">
             {faq.question}
           </AccordionTrigger>

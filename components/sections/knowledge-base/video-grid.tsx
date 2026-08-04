@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Play, X } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { RevealGroup } from "@/components/motion/reveal-group";
-import type { KBVideo } from "@/data/knowledge-base/videos";
+import type { Video as KBVideo } from "@/lib/db/schema";
 
 export function VideoGrid({ videos }: { videos: KBVideo[] }) {
   const [activeVideo, setActiveVideo] = useState<KBVideo | null>(null);
@@ -76,6 +76,7 @@ export function VideoGrid({ videos }: { videos: KBVideo[] }) {
                 className="size-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+                sandbox="allow-scripts allow-same-origin allow-presentation"
               />
             </div>
           </div>

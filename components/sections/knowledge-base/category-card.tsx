@@ -3,9 +3,9 @@ import { ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { IconBadge } from "@/components/shared/icon-badge";
 import { getKbIcon } from "./kb-icons";
-import type { KBCategory } from "@/data/knowledge-base/categories";
+import type { Category } from "@/lib/db/schema";
 
-export function CategoryCard({ category }: { category: KBCategory }) {
+export function CategoryCard({ category }: { category: Category }) {
   const Icon = getKbIcon(category.iconKey);
 
   return (

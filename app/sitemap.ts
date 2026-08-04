@@ -1,11 +1,15 @@
 import type { MetadataRoute } from "next";
+import { eq } from "drizzle-orm";
 import { siteConfig } from "@/lib/site-config";
 import { getAllSolutionSlugs } from "@/data/solutions";
-import { kbArticles } from "@/data/knowledge-base/articles";
+import { db } from "@/lib/db/client";
+import { articles } from "@/lib/db/schema";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteConfig.url;
   const now = new Date();
+
+  const kbArticles = await db.query.articles.findMany({ where: eq(articles.status, "published") });
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${baseUrl}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },

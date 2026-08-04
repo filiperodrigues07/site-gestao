@@ -6,16 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ArticleCard } from "./article-card";
 import { cn } from "@/lib/utils";
-import type { KBCategory } from "@/data/knowledge-base/categories";
-import type { KBArticle } from "@/data/knowledge-base/articles";
+import type { Category, Article } from "@/lib/db/schema";
+
+type ArticleWithCategory = Article & { category: Category };
 
 export function KnowledgeBaseExplorer({
   categories,
   articles,
   initialCategory = null,
 }: {
-  categories: KBCategory[];
-  articles: KBArticle[];
+  categories: Category[];
+  articles: ArticleWithCategory[];
   initialCategory?: string | null;
 }) {
   const [query, setQuery] = useState("");
@@ -25,7 +26,7 @@ export function KnowledgeBaseExplorer({
     const normalizedQuery = query.trim().toLowerCase();
     return articles.filter((article) => {
       const matchesCategory =
-        !activeCategory || article.categorySlug === activeCategory;
+        !activeCategory || article.category.slug === activeCategory;
       if (!matchesCategory) return false;
       if (!normalizedQuery) return true;
       const haystack = [article.title, article.excerpt, ...article.tags]
