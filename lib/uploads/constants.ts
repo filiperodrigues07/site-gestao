@@ -18,3 +18,15 @@ export const EXTENSION_MAP: Record<string, { type: DownloadFileType; mime: strin
 
 export const MAX_UPLOAD_SIZE_BYTES = 200 * 1024 * 1024;
 export const UPLOAD_DIR = "storage/uploads";
+
+export const IMAGE_EXTENSION_MAP: Record<string, { mime: string }> = {
+  ".png": { mime: "image/png" },
+  ".jpg": { mime: "image/jpeg" },
+  ".jpeg": { mime: "image/jpeg" },
+  ".gif": { mime: "image/gif" },
+  ".webp": { mime: "image/webp" },
+};
+
+export const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024;
+export const ARTICLE_IMAGES_DIR = "public/uploads/articles";
+export const ARTICLE_IMAGES_PUBLIC_PATH = "/uploads/articles";

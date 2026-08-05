@@ -60,7 +60,7 @@ export default async function BaseDeConhecimentoPage({
             ))}
           </RevealGroup>
 
-          <div className="mt-16">
+          <div id="artigos" className="mt-16 scroll-mt-24">
             <KnowledgeBaseExplorer
               categories={kbCategories}
               articles={kbArticles}

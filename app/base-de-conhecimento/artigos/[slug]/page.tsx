@@ -78,7 +78,7 @@ export default async function ArticlePage({
           </Reveal>
 
           <Reveal delay={0.15}>
-            <div className="prose prose-neutral mt-10 max-w-none prose-headings:font-heading prose-headings:font-medium prose-a:text-primary">
+            <div className="prose prose-invert mt-10 max-w-none prose-headings:font-heading prose-headings:font-medium prose-a:text-primary">
               <ReactMarkdown>{article.content}</ReactMarkdown>
             </div>
           </Reveal>

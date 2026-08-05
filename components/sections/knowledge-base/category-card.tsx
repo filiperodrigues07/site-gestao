@@ -9,7 +9,7 @@ export function CategoryCard({ category }: { category: Category }) {
   const Icon = getKbIcon(category.iconKey);
 
   return (
-    <Link href={`/base-de-conhecimento?categoria=${category.slug}`}>
+    <Link href={`/base-de-conhecimento?categoria=${category.slug}#artigos`}>
       <Card className="group h-full border-border/70 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
         <IconBadge icon={Icon} />
         <h3 className="mt-5 font-heading text-lg font-medium">

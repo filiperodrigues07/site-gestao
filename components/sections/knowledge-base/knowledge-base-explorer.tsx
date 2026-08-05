@@ -21,6 +21,12 @@ export function KnowledgeBaseExplorer({
 }) {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(initialCategory);
+  const [syncedCategory, setSyncedCategory] = useState(initialCategory);
+
+  if (initialCategory !== syncedCategory) {
+    setSyncedCategory(initialCategory);
+    setActiveCategory(initialCategory);
+  }
 
   const filtered = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
