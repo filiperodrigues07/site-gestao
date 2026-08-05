@@ -1,4 +1,6 @@
-export type SolutionCategory = "Gestão" | "Varejo" | "Serviços" | "Indústria";
+import type { VendorId } from "./vendors";
+
+export type SolutionCategory = "Gestão" | "Varejo" | "Serviços" | "Indústria" | "RH";
 
 export type Solution = {
   id: string;
@@ -6,11 +8,11 @@ export type Solution = {
   name: string;
   iconKey: string;
   category: SolutionCategory;
+  vendor: VendorId;
   shortDescription: string;
   longDescription: string;
   features: string[];
   benefits: string[];
-  accent: string;
 };
 
 export const solutions: Solution[] = [
@@ -20,25 +22,28 @@ export const solutions: Solution[] = [
     name: "ERP",
     iconKey: "Building2",
     category: "Gestão",
+    vendor: "ch-sistemas",
     shortDescription:
       "Gestão financeira, fiscal, estoque e compras em uma única plataforma.",
     longDescription:
-      "Um ERP completo para centralizar as operações da sua empresa: financeiro, contábil, fiscal, estoque, compras e faturamento integrados em tempo real. Tome decisões com base em dados confiáveis e elimine retrabalho entre setores.",
+      "Um ERP completo, local ou em nuvem, para centralizar as operações da sua empresa: financeiro, contábil, fiscal, estoque, compras e faturamento integrados em tempo real. Interface de clique único e processos centralizados numa mesma tela reduzem retrabalho entre setores, com relatórios e BI para decisões baseadas em dados confiáveis.",
     features: [
       "Contas a pagar e a receber",
       "Controle de estoque multi-depósito",
       "Emissão de notas fiscais (NF-e, NFC-e, NFS-e)",
       "Conciliação bancária automática",
       "Gestão de compras e cotações",
-      "Relatórios gerenciais em tempo real",
+      "Pedido digital direto do celular do cliente via link (Instagram/WhatsApp)",
+      "CHMob: BI e indicadores em tempo real no celular ou tablet",
+      "Criação e edição de relatórios, gráficos e análises",
     ],
     benefits: [
       "Redução de erros manuais",
       "Visão unificada do negócio",
       "Conformidade fiscal garantida",
+      "Menos cliques para cada tarefa do dia a dia",
       "Escalabilidade para crescer com a empresa",
     ],
-    accent: "blue",
   },
   {
     id: "pdv",
@@ -46,22 +51,26 @@ export const solutions: Solution[] = [
     name: "PDV",
     iconKey: "ShoppingCart",
     category: "Varejo",
+    vendor: "ch-sistemas",
     shortDescription: "Frente de caixa ágil, estável e integrada ao seu ERP.",
     longDescription:
-      "Sistema de ponto de venda pensado para agilidade no caixa e confiabilidade nas operações de balcão, com sincronização total com o estoque e o financeiro.",
+      "Sistema de ponto de venda que opera on-line ou off-line, independente de servidor local ou nuvem, com sincronização total com o estoque e o financeiro. Rapidez no caixa, interface amigável e integração nativa com PIX, TEF e clubes de promoção.",
     features: [
-      "Emissão rápida de cupom fiscal",
-      "Múltiplas formas de pagamento",
+      "Emissão de NFC-e, NF-e e NFS-e",
+      "Gestão de pré-vendas e DAV's",
+      "Integração com todos os TEFs do mercado",
+      "PIX QR Code direto no PDV, sem depender de extrato bancário",
+      "Controle de abertura, fechamento e sangria de caixa",
+      "Consulta rápida de preço de venda (CPV)",
+      "Integração com clube de promoções (Scanntech)",
       "Funciona mesmo com instabilidade de internet",
-      "Integração com balança e leitor de código de barras",
-      "Controle de caixa e sangria",
     ],
     benefits: [
       "Atendimento mais rápido ao cliente",
       "Menos filas no caixa",
+      "Recebimento de PIX sem conferência manual",
       "Dados de venda em tempo real",
     ],
-    accent: "blue",
   },
   {
     id: "supermercados",
@@ -69,22 +78,26 @@ export const solutions: Solution[] = [
     name: "Supermercados",
     iconKey: "ShoppingBasket",
     category: "Varejo",
+    vendor: "ch-sistemas",
     shortDescription: "Gestão completa para supermercados e mercearias.",
     longDescription:
-      "Solução especializada para o varejo alimentar, com controle de balança, validade, promoções e reposição automática de estoque para operações de qualquer porte.",
+      "Solução especializada para o varejo alimentar, com controle de balança, validade, promoções e reposição automática de estoque, sobre a mesma base robusta de PDV usada em operações de qualquer porte — com PIX, TEF e emissão fiscal integrados.",
     features: [
       "Gestão de balança e etiquetas de peso",
       "Controle de validade e perdas",
       "Promoções e tabelas de preço por loja",
       "Reposição automática de estoque",
-      "Integração com PDV e ERP",
+      "Emissão de NFC-e, NF-e e NFS-e",
+      "PIX QR Code e integração com todos os TEFs",
+      "Integração com clube de promoções (Scanntech)",
+      "Integração com PDV e ERP em tempo real",
     ],
     benefits: [
       "Menos ruptura e perda de produtos",
       "Precificação centralizada e ágil",
       "Operação padronizada entre filiais",
+      "Caixa rápido mesmo em horário de pico",
     ],
-    accent: "blue",
   },
   {
     id: "lojas-virtuais",
@@ -92,22 +105,25 @@ export const solutions: Solution[] = [
     name: "Lojas Virtuais",
     iconKey: "Globe",
     category: "Varejo",
+    vendor: "ch-sistemas",
     shortDescription: "E-commerce integrado ao seu estoque e financeiro.",
     longDescription:
-      "Conecte sua loja virtual diretamente ao ERP: estoque, preços e pedidos sincronizados automaticamente, sem planilhas paralelas ou lançamentos manuais.",
+      "Conecte sua loja virtual diretamente ao ERP: cadastro de clientes, produtos, imagens, estoque e pedidos sincronizados automaticamente. Delivery com pedido digital, integração com os principais marketplaces e clube de promoções, sem planilhas paralelas ou lançamentos manuais.",
     features: [
-      "Sincronização automática de estoque e preços",
-      "Integração com marketplaces",
+      "Cadastro unificado de clientes, produtos, imagens e estoque",
+      "Delivery com pedido digital direto do celular do cliente",
+      "Integração com marketplaces (Tray, Ideris, Loja Integrada)",
+      "Integração direta com o site institucional da empresa",
+      "Integração com clube de promoções (Scanntech)",
       "Gestão de pedidos centralizada",
       "Emissão fiscal automática por venda online",
-      "Acompanhamento de status de entrega",
     ],
     benefits: [
       "Fim da divergência entre loja física e online",
       "Menos erros de venda sem estoque",
       "Escala de vendas sem aumentar retrabalho",
+      "Presença em múltiplos marketplaces com um só cadastro",
     ],
-    accent: "blue",
   },
   {
     id: "vendas-e-distribuicao",
@@ -115,22 +131,26 @@ export const solutions: Solution[] = [
     name: "Vendas e Distribuição",
     iconKey: "TrendingUp",
     category: "Gestão",
+    vendor: "ch-sistemas",
     shortDescription: "Força de vendas externa conectada em tempo real.",
     longDescription:
-      "Ferramentas para equipes de vendas e distribuidoras: pedidos em campo, roteirização e apuração de comissões, tudo integrado ao estoque e ao financeiro.",
+      "Ferramentas para equipes de vendas e distribuidoras: pedidos, cotações e venda ambulante direto do celular com o CHMobile, roteirização de entregas e apuração automática de comissões — tudo integrado ao estoque e ao financeiro em tempo real.",
     features: [
-      "Aplicativo de força de vendas externa",
-      "Pedidos offline com sincronização automática",
-      "Roteirização de entregas",
-      "Apuração automática de comissões",
-      "Tabelas de preço e políticas comerciais por cliente",
+      "CHMobile: aplicativo para pedidos, cotações e venda ambulante",
+      "Cadastro de clientes e emissão/posição de boletos e títulos",
+      "Faturamento de NF-e",
+      "Flex: verba de desconto recorrente por cliente",
+      "Estoque e reserva por empresa/filial",
+      "Pedidos de venda por lote e rotas de entrega",
+      "Regiões de venda por representante e romaneios de carga",
+      "Relatórios, gráficos e análises de desempenho",
     ],
     benefits: [
       "Mais produtividade da equipe externa",
-      "Pedidos sem erro de digitação",
+      "Pedidos sem erro de digitação, mesmo offline",
       "Visibilidade total do funil de vendas",
+      "Comissionamento apurado automaticamente",
     ],
-    accent: "blue",
   },
   {
     id: "ordem-de-servico",
@@ -138,22 +158,26 @@ export const solutions: Solution[] = [
     name: "Ordem de Serviço",
     iconKey: "ClipboardList",
     category: "Serviços",
+    vendor: "ch-sistemas",
     shortDescription: "Controle completo de ordens de serviço e assistência técnica.",
     longDescription:
-      "Gerencie abertura, execução e faturamento de ordens de serviço com rastreabilidade total — do orçamento até a entrega ao cliente.",
+      "Gerencie abertura, execução e faturamento de ordens de serviço com rastreabilidade total — do diagnóstico à entrega ao cliente — com agenda, ficha técnica por equipamento e aplicativo mobile para a equipe em campo.",
     features: [
-      "Abertura e acompanhamento de OS",
-      "Controle de peças e mão de obra",
-      "Orçamento com aprovação do cliente",
-      "Histórico completo por cliente/equipamento",
-      "Faturamento integrado ao financeiro",
+      "Abertura e acompanhamento de OS com painel informativo",
+      "Agenda com controle de atendimento",
+      "Diagnósticos, análises e tempo de execução por serviço",
+      "Ficha técnica e histórico completo de manutenções",
+      "Avisos automáticos de retorno ao cliente",
+      "Controle de serviço realizado por item",
+      "Emissão de NFC-e, NF-e e NFS-e",
+      "CHMob (OS): gestão da ordem de serviço pelo celular ou tablet",
     ],
     benefits: [
       "Mais transparência com o cliente",
-      "Redução de retrabalho na oficina",
+      "Redução de retrabalho na execução",
       "Previsibilidade de faturamento",
+      "Histórico completo por cliente e equipamento",
     ],
-    accent: "blue",
   },
   {
     id: "mecanica-auto-center",
@@ -161,22 +185,25 @@ export const solutions: Solution[] = [
     name: "Mecânica / Auto Center",
     iconKey: "Wrench",
     category: "Serviços",
+    vendor: "ch-sistemas",
     shortDescription: "Gestão especializada para oficinas e auto centers.",
     longDescription:
-      "Sistema voltado para o dia a dia de oficinas mecânicas e auto centers: cadastro de veículos, histórico de manutenções e controle de peças em um só lugar.",
+      "Sistema voltado para o dia a dia de oficinas mecânicas e auto centers: cadastro de veículos, orçamento com aprovação do cliente, histórico de manutenções e controle de peças, com aplicativo mobile para gestão da ordem de serviço em qualquer lugar.",
     features: [
       "Cadastro de veículos e histórico de manutenções",
-      "Orçamento e ordem de serviço integrados",
+      "Orçamento e ordem de serviço integrados, com aprovação do cliente",
       "Controle de estoque de peças e insumos",
       "Agenda de elevadores e mecânicos",
-      "Emissão fiscal de peças e serviços",
+      "Diagnósticos e tempo de execução por serviço",
+      "Emissão fiscal de peças e serviços (NFC-e, NF-e, NFS-e)",
+      "CHMob (OS): gestão mobile da ordem de serviço",
     ],
     benefits: [
       "Fidelização por histórico do veículo",
       "Menos peças paradas em estoque",
       "Agenda organizada, sem conflitos",
+      "Orçamento aprovado pelo cliente antes de iniciar o serviço",
     ],
-    accent: "blue",
   },
   {
     id: "transportes-e-logistica",
@@ -184,22 +211,25 @@ export const solutions: Solution[] = [
     name: "Transportes e Logística",
     iconKey: "Truck",
     category: "Indústria",
+    vendor: "ch-sistemas",
     shortDescription: "Gestão de frotas, fretes e documentos de transporte.",
     longDescription:
-      "Controle operações de transporte de carga com emissão de CT-e/MDF-e, gestão de frota e acompanhamento de fretes de ponta a ponta.",
+      "Para transportadoras, agentes de carga, operadores logísticos e centros de distribuição: acertos de viagem, manifestos, controle de frota, pneus e combustíveis, tabelas de frete e cargas perigosas, com emissão de CT-e, MDF-e, CT-e OS e CIOT integrada.",
     features: [
-      "Emissão de CT-e e MDF-e",
-      "Gestão de frota e manutenção de veículos",
-      "Controle de fretes e romaneios",
-      "Rastreamento de cargas",
-      "Apuração de custos por rota",
+      "Acertos de viagem, manifestos e ordem de abastecimento",
+      "Controle de motoristas, veículos, pneus e combustíveis",
+      "Gestão de avarias nas entregas e despesas de manutenção da frota",
+      "Tabelas e cotações de frete, gestão de cargas perigosas",
+      "Comissões e mapas de rota",
+      "Integrações com seguro de carga (AT&M), EDI Proceda, CIOT (Extratta/eFrete)",
+      "Emissão de CT-e, MDF-e, CT-e OS e CIOT",
     ],
     benefits: [
       "Conformidade fiscal no transporte",
       "Redução de custo por rota",
       "Menos tempo parado por manutenção não planejada",
+      "Rastreabilidade completa da frota e da carga",
     ],
-    accent: "blue",
   },
   {
     id: "pet-shop",
@@ -207,22 +237,26 @@ export const solutions: Solution[] = [
     name: "Pet Shop",
     iconKey: "PawPrint",
     category: "Varejo",
+    vendor: "ch-sistemas",
     shortDescription: "Gestão de vendas, serviços e agenda para pet shops.",
     longDescription:
-      "Solução completa para pet shops e clínicas veterinárias: agenda de banho e tosa, ficha do animal, vendas e controle de estoque em um único sistema.",
+      "Solução completa para pet shops e clínicas veterinárias: ficha do animal com imagem, sala de espera com prontuário, agenda de banho, tosa e atendimento veterinário, e geração automática de ordem de serviço ao concluir o atendimento.",
     features: [
-      "Agenda de banho, tosa e serviços",
-      "Ficha completa do animal e do tutor",
-      "Controle de estoque de ração e produtos",
-      "Pacotes e planos de assinatura",
-      "PDV integrado",
+      "Ficha completa do animal (com imagem), tutor e histórico",
+      "Cadastro de procedimentos, vacinas, patologias e planos/convênios",
+      "Sala de espera com prontuário e OS gerada automaticamente",
+      "Agenda de banho, tosa e atendimento veterinário por período",
+      "Controle de gaiola, tempo agendado e serviço de busca/entrega",
+      "Lembretes de agenda e vacinas na tela principal",
+      "PDV e controle de estoque de ração e produtos integrados",
+      "CHMob (OS): gestão mobile da ordem de serviço",
     ],
     benefits: [
       "Mais recorrência de clientes",
       "Agenda sem overbooking",
-      "Histórico completo do animal",
+      "Histórico completo do animal em um só lugar",
+      "Menos esquecimento de vacinas e retornos",
     ],
-    accent: "blue",
   },
   {
     id: "cobranca",
@@ -230,22 +264,26 @@ export const solutions: Solution[] = [
     name: "Cobrança",
     iconKey: "Banknote",
     category: "Gestão",
+    vendor: "ch-sistemas",
     shortDescription: "Gestão de contas a receber e cobrança automatizada.",
     longDescription:
-      "Automatize a régua de cobrança, controle inadimplência e integre boletos, PIX e carnês diretamente ao financeiro da empresa.",
+      "Automatize a cobrança de ponta a ponta: emissão de boletos via API, retorno automático com baixa no contas a receber, conciliação bancária e negativação de títulos, integrado a diversos bancos e com envio por WhatsApp e e-mail.",
     features: [
-      "Régua de cobrança automatizada",
-      "Emissão de boletos e PIX",
-      "Negativação e acordos de dívida",
-      "Notificações automáticas por e-mail/SMS/WhatsApp",
-      "Relatórios de inadimplência",
+      "Integração com diversos bancos do país",
+      "Emissão de boletos via API",
+      "Retorno automático com baixa do contas a receber",
+      "Geração automática de lançamentos bancários",
+      "Conciliação bancária",
+      "Gestão de débito automático, retornos e ocorrências",
+      "Renegociação, prorrogação e negativação de títulos",
+      "Envio de boleto por WhatsApp e/ou e-mail",
     ],
     benefits: [
       "Redução da inadimplência",
       "Menos tempo gasto cobrando manualmente",
       "Fluxo de caixa mais previsível",
+      "Conciliação bancária sem retrabalho",
     ],
-    accent: "blue",
   },
   {
     id: "bares-e-restaurantes",
@@ -253,22 +291,26 @@ export const solutions: Solution[] = [
     name: "Bares e Restaurantes",
     iconKey: "UtensilsCrossed",
     category: "Serviços",
+    vendor: "ch-sistemas",
     shortDescription: "Comandas, cardápio e cozinha conectados em tempo real.",
     longDescription:
-      "Sistema para bares, restaurantes e lanchonetes com controle de comandas, mesas, cardápio digital e integração direta com a cozinha e o caixa.",
+      "Sistema para bares, restaurantes e lanchonetes, em modo convencional ou touch: controle de mesas, comandas e cartão consumo, pedido digital por QR Code na mesa ou pelo delivery, com gerenciador automático de impressão para cozinha e integração com o iFood.",
     features: [
-      "Comandas eletrônicas e controle de mesas",
-      "Cardápio digital com QR Code",
-      "Integração com a cozinha (KDS)",
-      "Divisão de conta e taxa de serviço",
-      "Delivery integrado ao PDV",
+      "Controle de mesas, comandas, cartão consumo e delivery",
+      "Produtos favoritos, composições, complementos e promoções",
+      "Transferência/agrupamento de mesas e pagamento parcial da conta",
+      "Pedido digital local via QR Code na mesa",
+      "Pedido digital delivery direto do Instagram/WhatsApp do cliente",
+      "Integração com iFood e com diversas balanças",
+      "Gerenciador automático de impressão para cozinha e monitor de preparo",
+      "CHMob (BRS): gestão de mesas, comanda e cartão consumo pelo celular",
     ],
     benefits: [
       "Atendimento mais rápido nas mesas",
       "Menos erros entre salão e cozinha",
       "Melhor controle de custo por prato",
+      "Delivery e presencial na mesma operação",
     ],
-    accent: "blue",
   },
   {
     id: "hoteis-e-pousadas",
@@ -276,22 +318,24 @@ export const solutions: Solution[] = [
     name: "Hotéis e Pousadas",
     iconKey: "BedDouble",
     category: "Serviços",
+    vendor: "ch-sistemas",
     shortDescription: "Reservas, hospedagem e faturamento em um só sistema.",
     longDescription:
-      "Gestão hoteleira com mapa de reservas, controle de diárias, consumo de hóspedes e faturamento integrado — da reserva ao check-out.",
+      "Gestão hoteleira com mapa de reservas, controle de diárias, tempo de permanência e taxas de ocupação, do check-in ao check-out — com consumo de hóspedes por apartamento e faturamento integrado ao restante da operação.",
     features: [
       "Mapa de reservas e disponibilidade",
+      "Controle de diárias, tempo de permanência e taxas de ocupação",
       "Check-in e check-out ágil",
       "Consumo de frigobar e serviços por apartamento",
       "Integração com canais de reserva (OTAs)",
-      "Faturamento e nota fiscal por hospedagem",
+      "Emissão de NFC-e, NF-e e NFS-e por hospedagem",
+      "Relatórios de rentabilidade e ocupação",
     ],
     benefits: [
       "Menos overbooking",
       "Faturamento sem esquecer consumos",
-      "Visão consolidada de ocupação",
+      "Visão consolidada de ocupação e rentabilidade",
     ],
-    accent: "blue",
   },
   {
     id: "materiais-de-construcao",
@@ -299,22 +343,25 @@ export const solutions: Solution[] = [
     name: "Materiais de Construção",
     iconKey: "Hammer",
     category: "Varejo",
+    vendor: "ch-sistemas",
     shortDescription: "Gestão especializada para casas de material de construção.",
     longDescription:
-      "Solução para lojas de material de construção com controle de vendas balcão e entrega, cotação de fornecedores e gestão de itens vendidos por metro, litro ou unidade.",
+      "Solução para lojas de material de construção com vendas para entrega futura (encomenda), controle de estoque, PDV, compras e crédito integrados, além de condicionais com gestão de devoluções e romaneios de entrega.",
     features: [
-      "Vendas balcão e entrega separadas",
-      "Controle de múltiplas unidades de medida",
+      "Vendas balcão e para entrega futura (por encomenda)",
+      "Controle de múltiplas unidades de medida (metro, litro, unidade)",
+      "Gestão de estoque, PDV, compras e crédito integrados",
       "Cotação e pedido de compra a fornecedores",
-      "Tabela de preços por volume/obra",
+      "Controle de entregas, ordem de entrega e romaneios",
+      "Condicionais com gestão de devoluções",
       "Orçamento de obra para o cliente",
     ],
     benefits: [
       "Menos divergência de estoque físico",
       "Orçamentos mais rápidos e precisos",
       "Melhor negociação com fornecedores",
+      "Controle de crédito e condicionais sem planilha paralela",
     ],
-    accent: "blue",
   },
   {
     id: "pcp",
@@ -322,22 +369,25 @@ export const solutions: Solution[] = [
     name: "PCP",
     iconKey: "Factory",
     category: "Indústria",
+    vendor: "ch-sistemas",
     shortDescription: "Planejamento e controle da produção industrial.",
     longDescription:
-      "Ferramentas de PCP para planejar ordens de produção, controlar apontamentos de chão de fábrica e acompanhar o consumo de matéria-prima em tempo real.",
+      "Automatize o processo de produção: cadastro de fórmulas e índices técnicos, ordens de produção do consumo de matéria-prima ao produto acabado, e análise de custos, perdas e curva ABCD em tempo real — com integrações específicas para o segmento de tintas.",
     features: [
-      "Ordens de produção e roteiros de fabricação",
-      "Apontamento de chão de fábrica",
-      "Controle de matéria-prima e insumos",
+      "Cadastro de fórmulas (índices técnicos) e estágios de produção",
+      "Ordem de produção: da matéria-prima ao produto acabado",
+      "Apontamento e controle da produção por local de armazenagem",
+      "Análise de custos, perdas e curva ABCD",
+      "Integração com máquinas de tinta (Sherwin Williams, Suvinil, Skylack, Auto Color)",
       "Programação de capacidade produtiva",
-      "Custo de produção em tempo real",
+      "Relatórios, gráficos e estatísticas de produção",
     ],
     benefits: [
       "Produção mais previsível",
       "Menos desperdício de insumos",
       "Custo de fabricação sob controle",
+      "Rastreabilidade completa do lote produzido",
     ],
-    accent: "blue",
   },
   {
     id: "crm",
@@ -345,12 +395,15 @@ export const solutions: Solution[] = [
     name: "CRM",
     iconKey: "Users",
     category: "Gestão",
+    vendor: "ch-sistemas",
     shortDescription: "Relacionamento com o cliente do primeiro contato à fidelização.",
     longDescription:
-      "Centralize o relacionamento com clientes e leads: funil de vendas, histórico de interações e automações de marketing integradas ao restante da operação.",
+      "Centralize o relacionamento com clientes e leads: funil de vendas, telemarketing e análise de pós-venda, faturamento de contratos recorrentes e automações de follow-up integradas ao restante da operação.",
     features: [
       "Funil de vendas configurável",
-      "Histórico completo de interações",
+      "Telemarketing e análise de pós-venda por critérios",
+      "Faturamento de contratos: NFS-e a partir de títulos provisionados",
+      "Histórico completo de interações com o cliente",
       "Automação de follow-up",
       "Segmentação de clientes e campanhas",
       "Integração com vendas e financeiro",
@@ -359,8 +412,37 @@ export const solutions: Solution[] = [
       "Mais conversão de leads",
       "Relacionamento centralizado",
       "Decisões comerciais baseadas em dados",
+      "Faturamento recorrente sem esquecer contratos",
     ],
-    accent: "blue",
+  },
+  {
+    id: "secullum-ponto",
+    slug: "secullum-ponto",
+    name: "Secullum Ponto",
+    iconKey: "Fingerprint",
+    category: "RH",
+    vendor: "secullum",
+    shortDescription:
+      "Controle de ponto eletrônico com reconhecimento facial, apps e cálculo de folha transparente.",
+    longDescription:
+      "O Secullum Ponto moderniza o controle de jornada da sua equipe: relógios com reconhecimento facial, aplicativos individual e coletivo para registro em campo, e indicadores em tempo real de banco de horas e horas extras. Segurança jurídica com assinatura eletrônica do espelho de ponto e memória de cálculo transparente na folha.",
+    features: [
+      "Relógio de ponto com reconhecimento facial",
+      "Aplicativo individual e coletivo para registro em campo",
+      "Registro offline com geolocalização",
+      "Assinatura eletrônica do espelho de ponto",
+      "Indicadores em tempo real de banco de horas e horas extras",
+      "Cálculo de folha com memória de cálculo transparente",
+      "Dashboards e relatórios gerenciais de RH",
+      "Integração com sistemas de folha de pagamento",
+    ],
+    benefits: [
+      "Redução de tempo gasto em apuração de ponto",
+      "Conformidade com a legislação trabalhista",
+      "Menos disputas trabalhistas por transparência no cálculo",
+      "Gestão de RH orientada por dados",
+      "Redução de custos com retrabalho manual",
+    ],
   },
 ];
 
@@ -375,11 +457,11 @@ export function getAllSolutionSlugs() {
 export function getRelatedSolutions(slug: string, count = 3) {
   const current = getSolutionBySlug(slug);
   if (!current) return [];
-  return solutions
-    .filter((solution) => solution.slug !== slug && solution.category === current.category)
-    .slice(0, count)
-    .concat(
-      solutions.filter((solution) => solution.slug !== slug && solution.category !== current.category)
-    )
+  const sameVendor = solutions.filter(
+    (solution) => solution.slug !== slug && solution.vendor === current.vendor
+  );
+  return sameVendor
+    .filter((solution) => solution.category === current.category)
+    .concat(sameVendor.filter((solution) => solution.category !== current.category))
     .slice(0, count);
 }

@@ -5,6 +5,7 @@ import { Container } from "@/components/shared/container";
 import { IconBadge } from "@/components/shared/icon-badge";
 import { Reveal } from "@/components/motion/reveal";
 import { getSolutionIcon } from "./solution-icons";
+import { VendorBadge } from "./vendor-badge";
 import type { Solution } from "@/data/solutions";
 
 export function SolutionHero({ solution }: { solution: Solution }) {
@@ -49,6 +50,10 @@ export function SolutionHero({ solution }: { solution: Solution }) {
               </Button>
             </Reveal>
           </div>
+
+          <Reveal delay={0.1} className="lg:justify-self-end">
+            <VendorBadge vendor={solution.vendor} />
+          </Reveal>
         </div>
       </Container>
     </section>

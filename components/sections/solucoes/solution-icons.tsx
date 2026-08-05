@@ -14,6 +14,7 @@ import {
   Hammer,
   Factory,
   Users,
+  Fingerprint,
   type LucideIcon,
 } from "lucide-react";
 
@@ -33,6 +34,7 @@ export const solutionIcons: Record<string, LucideIcon> = {
   Hammer,
   Factory,
   Users,
+  Fingerprint,
 };
 
 export function getSolutionIcon(iconKey: string): LucideIcon {

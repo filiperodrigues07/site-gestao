@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Site Gestão Consultorias & Sistemas Integrados
 
-## Getting Started
+Site institucional da **Gestão Consultorias & Sistemas Integrados** — revenda oficial CH Sistemas e representante autorizado Secullum.
 
-First, run the development server:
+## O que tem no site
+
+- **Home** — apresentação da empresa, diferenciais e chamadas para contato e demonstração.
+- **Soluções** — catálogo completo dos módulos de sistema revendidos (ERP, PDV, CRM, Supermercados, Pet Shop, Bares e Restaurantes, entre outros), cada um com sua própria página de detalhes, funcionalidades e benefícios. Inclui destaque para a marca CH Sistemas e uma seção exclusiva para o Secullum Ponto (controle de ponto eletrônico).
+- **Institucional** — quem somos, missão, visão, valores e um carrossel com fotos da equipe e do escritório.
+- **Base de Conhecimento** — artigos, categorias, perguntas frequentes, vídeos e downloads (manuais e instaladores) para os clientes consultarem.
+- **Contato** — formulário de contato e solicitação de demonstração, integrado a WhatsApp e e-mail.
+
+## Painel administrativo
+
+Em `/admin`, com login próprio, a equipe consegue manter a Base de Conhecimento sempre atualizada sem depender de programação:
+
+- Publicar, editar e excluir artigos
+- Cadastrar categorias, perguntas frequentes e vídeos
+- Enviar manuais e instaladores para download pelos clientes
+
+## Como rodar o site no seu computador
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Depois é só abrir [http://localhost:3000](http://localhost:3000) no navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Para usar o painel administrativo localmente, é preciso configurar algumas informações de acesso — veja o arquivo `.env.example` para saber quais e como gerar.
