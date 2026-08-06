@@ -15,6 +15,14 @@ export const categories = sqliteTable("categories", {
   ...timestamps,
 });
 
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  username: text("username").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  ...timestamps,
+});
+
 export const articles = sqliteTable("articles", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   slug: text("slug").notNull().unique(),
@@ -24,6 +32,7 @@ export const articles = sqliteTable("articles", {
   categoryId: integer("category_id")
     .notNull()
     .references(() => categories.id, { onDelete: "restrict" }),
+  authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
   tags: text("tags", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
   status: text("status", { enum: ["draft", "published"] }).notNull().default("draft"),
   ...timestamps,
@@ -67,10 +76,15 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 
 export const articlesRelations = relations(articles, ({ one }) => ({
   category: one(categories, { fields: [articles.categoryId], references: [categories.id] }),
+  author: one(users, { fields: [articles.authorId], references: [users.id] }),
 }));
 
 export const faqsRelations = relations(faqs, ({ one }) => ({
   category: one(categories, { fields: [faqs.categoryId], references: [categories.id] }),
+}));
+
+export const usersRelations = relations(users, ({ many }) => ({
+  articles: many(articles),
 }));
 
 export type Category = typeof categories.$inferSelect;
@@ -78,3 +92,4 @@ export type Article = typeof articles.$inferSelect;
 export type FAQ = typeof faqs.$inferSelect;
 export type Video = typeof videos.$inferSelect;
 export type Download = typeof downloads.$inferSelect;
+export type User = typeof users.$inferSelect;

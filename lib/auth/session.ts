@@ -9,8 +9,8 @@ function getSecretKey() {
   return new TextEncoder().encode(secret);
 }
 
-export async function createSessionToken(username: string): Promise<string> {
-  return new SignJWT({ sub: username })
+export async function createSessionToken(userId: number): Promise<string> {
+  return new SignJWT({ sub: String(userId) })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_TTL_SECONDS}s`)

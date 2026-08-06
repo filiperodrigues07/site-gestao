@@ -1,11 +1,30 @@
+import { eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { categories, articles, faqs, videos } from "@/lib/db/schema";
+import { categories, articles, faqs, videos, users } from "@/lib/db/schema";
 import { kbCategories } from "@/data/knowledge-base/categories";
 import { kbArticles } from "@/data/knowledge-base/articles";
 import { faqs as kbFaqs } from "@/data/knowledge-base/faqs";
 import { kbVideos } from "@/data/knowledge-base/videos";
 
 async function seed() {
+  const bootstrapUsername = process.env.ADMIN_USERNAME;
+  const bootstrapPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+
+  if (bootstrapUsername && bootstrapPasswordHash) {
+    await db
+      .insert(users)
+      .values({
+        name: "Administrador",
+        username: bootstrapUsername,
+        passwordHash: bootstrapPasswordHash,
+      })
+      .onConflictDoNothing({ target: users.username });
+  } else {
+    console.warn(
+      "[seed] ADMIN_USERNAME/ADMIN_PASSWORD_HASH não definidos — pulando bootstrap de usuário."
+    );
+  }
+
   for (const category of kbCategories) {
     await db
       .insert(categories)
@@ -40,6 +59,18 @@ async function seed() {
         updatedAt: article.updatedAt,
       })
       .onConflictDoNothing({ target: articles.slug });
+  }
+
+  if (bootstrapUsername) {
+    const bootstrapUser = await db.query.users.findFirst({
+      where: eq(users.username, bootstrapUsername),
+    });
+    if (bootstrapUser) {
+      await db
+        .update(articles)
+        .set({ authorId: bootstrapUser.id })
+        .where(isNull(articles.authorId));
+    }
   }
 
   for (const faq of kbFaqs) {

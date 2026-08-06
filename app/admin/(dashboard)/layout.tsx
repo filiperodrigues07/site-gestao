@@ -1,4 +1,4 @@
-import { verifySession } from "@/lib/auth/dal";
+import { getCurrentUser } from "@/lib/auth/dal";
 import { SidebarNav } from "@/components/admin/sidebar-nav";
 
 // Nunca cachear/pré-renderizar o painel admin: cada request precisa
@@ -11,11 +11,11 @@ export default async function AdminDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await verifySession();
+  const user = await getCurrentUser();
 
   return (
     <div className="flex min-h-screen">
-      <SidebarNav />
+      <SidebarNav currentUserName={user.name} />
       <main className="flex-1 p-8">{children}</main>
     </div>
   );

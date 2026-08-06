@@ -3,7 +3,7 @@ import Link from "next/link";
 import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, User } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/motion/reveal";
@@ -13,7 +13,7 @@ import { articles } from "@/lib/db/schema";
 async function getPublishedArticle(slug: string) {
   return db.query.articles.findFirst({
     where: and(eq(articles.slug, slug), eq(articles.status, "published")),
-    with: { category: true },
+    with: { category: true, author: true },
   });
 }
 
@@ -69,6 +69,12 @@ export default async function ArticlePage({
                 year: "numeric",
               })}
             </span>
+            {article.author && (
+              <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <User className="size-3.5" />
+                {article.author.name}
+              </span>
+            )}
           </Reveal>
 
           <Reveal delay={0.1}>

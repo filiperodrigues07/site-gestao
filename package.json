@@ -9,7 +9,7 @@
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx scripts/seed.ts",
+    "db:seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
     "hash-password": "tsx scripts/hash-password.ts"
   },
   "dependencies": {

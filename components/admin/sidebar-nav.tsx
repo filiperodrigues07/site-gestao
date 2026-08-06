@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Download, FolderOpen, HelpCircle, Video, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  FileText,
+  Download,
+  FolderOpen,
+  HelpCircle,
+  Video,
+  Users,
+  LogOut,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/app/admin/actions";
 
@@ -13,9 +22,10 @@ const NAV_ITEMS = [
   { href: "/admin/categorias", label: "Categorias", icon: FolderOpen },
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
   { href: "/admin/videos", label: "Vídeos", icon: Video },
+  { href: "/admin/usuarios", label: "Usuários", icon: Users },
 ] as const;
 
-export function SidebarNav() {
+export function SidebarNav({ currentUserName }: { currentUserName: string }) {
   const pathname = usePathname();
 
   return (
@@ -44,7 +54,10 @@ export function SidebarNav() {
           );
         })}
       </nav>
-      <form action={logoutAction} className="p-3">
+      <form action={logoutAction} className="border-t border-border p-3">
+        <p className="px-3 pb-2 text-xs text-muted-foreground">
+          Logado como <span className="font-medium text-foreground">{currentUserName}</span>
+        </p>
         <button
           type="submit"
           className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

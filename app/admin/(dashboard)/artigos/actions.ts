@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { verifySession } from "@/lib/auth/dal";
+import { verifySession, getCurrentUser } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { articles } from "@/lib/db/schema";
 import { articleSchema, type ArticleFormValues } from "@/lib/validations/admin/article-schema";
@@ -16,7 +16,7 @@ function splitTags(tags: string): string[] {
 }
 
 export async function createArticle(values: ArticleFormValues) {
-  await verifySession();
+  const user = await getCurrentUser();
   const parsed = articleSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -24,6 +24,7 @@ export async function createArticle(values: ArticleFormValues) {
     await db.insert(articles).values({
       ...parsed.data,
       tags: splitTags(parsed.data.tags),
+      authorId: user.id,
     });
   } catch {
     return { error: "Já existe um artigo com esse slug" };
