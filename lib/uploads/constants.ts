@@ -27,6 +27,8 @@ export const IMAGE_EXTENSION_MAP: Record<string, { mime: string }> = {
   ".webp": { mime: "image/webp" },
 };
 
-export const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024;
-export const ARTICLE_IMAGES_DIR = "public/uploads/articles";
-export const ARTICLE_IMAGES_PUBLIC_PATH = "/uploads/articles";
+export const MAX_IMAGE_SIZE_BYTES = 50 * 1024 * 1024;
+export const ARTICLE_IMAGES_DIR = "storage/uploads/articles";
+export const ARTICLE_IMAGES_PUBLIC_PATH = "/api/uploads/articles";
+
+export const PROMOTION_IMAGES_DIR = "storage/uploads/promotions";

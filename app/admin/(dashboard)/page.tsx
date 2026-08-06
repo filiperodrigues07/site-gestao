@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { sql } from "drizzle-orm";
-import { FileText, Download, FolderOpen, HelpCircle, Video } from "lucide-react";
+import { FileText, Download, FolderOpen, HelpCircle, Video, Megaphone } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { db } from "@/lib/db/client";
-import { articles, downloads, categories, faqs, videos } from "@/lib/db/schema";
+import { articles, downloads, categories, faqs, videos, promotions } from "@/lib/db/schema";
 
 const SECTIONS = [
   { href: "/admin/artigos", label: "Artigos", icon: FileText, table: articles },
@@ -11,6 +11,7 @@ const SECTIONS = [
   { href: "/admin/categorias", label: "Categorias", icon: FolderOpen, table: categories },
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle, table: faqs },
   { href: "/admin/videos", label: "Vídeos", icon: Video, table: videos },
+  { href: "/admin/promocoes", label: "Promoções", icon: Megaphone, table: promotions },
 ] as const;
 
 export default async function AdminDashboardPage() {

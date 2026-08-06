@@ -47,5 +47,3 @@ next-env.d.ts
 # uploaded files
 /storage/uploads/*
 !/storage/uploads/.gitkeep
-/public/uploads/articles/*
-!/public/uploads/articles/.gitkeep

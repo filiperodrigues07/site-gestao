@@ -10,6 +10,7 @@ import {
   HelpCircle,
   Video,
   Users,
+  Megaphone,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { href: "/admin/categorias", label: "Categorias", icon: FolderOpen },
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
   { href: "/admin/videos", label: "Vídeos", icon: Video },
+  { href: "/admin/promocoes", label: "Promoções", icon: Megaphone },
   { href: "/admin/usuarios", label: "Usuários", icon: Users },
 ] as const;
 

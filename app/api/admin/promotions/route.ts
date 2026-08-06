@@ -3,13 +3,12 @@ import fs from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth/session";
-import {
-  IMAGE_EXTENSION_MAP,
-  MAX_IMAGE_SIZE_BYTES,
-  ARTICLE_IMAGES_DIR,
-  ARTICLE_IMAGES_PUBLIC_PATH,
-} from "@/lib/uploads/constants";
+import { db } from "@/lib/db/client";
+import { promotions } from "@/lib/db/schema";
+import { promotionMetadataSchema } from "@/lib/validations/admin/promotion-schema";
+import { IMAGE_EXTENSION_MAP, MAX_IMAGE_SIZE_BYTES, PROMOTION_IMAGES_DIR } from "@/lib/uploads/constants";
 
 export async function POST(request: Request) {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
@@ -24,6 +23,18 @@ export async function POST(request: Request) {
   }
 
   const file = formData.get("file");
+  const parsed = promotionMetadataSchema.safeParse({
+    title: formData.get("title"),
+    linkUrl: formData.get("linkUrl") ?? "",
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { success: false, errors: parsed.error.flatten().fieldErrors },
+      { status: 400 }
+    );
+  }
+
   if (!(file instanceof File)) {
     return NextResponse.json(
       { success: false, errors: { file: ["Selecione uma imagem"] } },
@@ -52,13 +63,24 @@ export async function POST(request: Request) {
 
   const safeName = file.name.replace(/[/\\?%*:|"<>]/g, "_");
   const storedFileName = `${randomUUID()}-${safeName}`;
-  const uploadDir = path.join(/*turbopackIgnore: true*/ process.cwd(), ARTICLE_IMAGES_DIR);
+  const uploadDir = path.join(/*turbopackIgnore: true*/ process.cwd(), PROMOTION_IMAGES_DIR);
   await fs.mkdir(uploadDir, { recursive: true });
   const buffer = Buffer.from(await file.arrayBuffer());
   await fs.writeFile(path.join(uploadDir, storedFileName), buffer);
 
-  return NextResponse.json({
-    success: true,
-    url: `${ARTICLE_IMAGES_PUBLIC_PATH}/${storedFileName}`,
-  });
+  const [row] = await db
+    .insert(promotions)
+    .values({
+      title: parsed.data.title,
+      linkUrl: parsed.data.linkUrl || null,
+      storedFileName,
+      originalFileName: file.name,
+      mimeType: resolved.mime,
+      sizeBytes: file.size,
+    })
+    .returning();
+
+  revalidatePath("/");
+
+  return NextResponse.json({ success: true, id: row.id });
 }

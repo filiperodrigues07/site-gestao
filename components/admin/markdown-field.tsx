@@ -116,7 +116,8 @@ export function MarkdownField({
           onPaste={handlePaste}
         />
         <p className="mt-1.5 text-xs text-muted-foreground">
-          Cole uma imagem (Ctrl+V) ou use &quot;Anexar imagem&quot; para inserir no texto na posição do cursor.
+          Cole uma imagem (Ctrl+V) ou use &quot;Anexar imagem&quot; para inserir no texto na posição do
+          cursor. Aceita PNG, JPG, GIF (inclusive animado) e WEBP, até 50MB.
         </p>
       </TabsContent>
       <TabsContent value="preview">

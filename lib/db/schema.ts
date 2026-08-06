@@ -69,6 +69,17 @@ export const downloads = sqliteTable("downloads", {
   ...timestamps,
 });
 
+export const promotions = sqliteTable("promotions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  linkUrl: text("link_url"),
+  storedFileName: text("stored_file_name").notNull(),
+  originalFileName: text("original_file_name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  sizeBytes: integer("size_bytes").notNull(),
+  ...timestamps,
+});
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   articles: many(articles),
   faqs: many(faqs),
@@ -93,3 +104,4 @@ export type FAQ = typeof faqs.$inferSelect;
 export type Video = typeof videos.$inferSelect;
 export type Download = typeof downloads.$inferSelect;
 export type User = typeof users.$inferSelect;
+export type Promotion = typeof promotions.$inferSelect;
