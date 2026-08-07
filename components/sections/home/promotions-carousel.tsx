@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import type { Promotion } from "@/lib/db/schema";
 
@@ -27,7 +28,7 @@ export function PromotionsCarousel({ promotions }: { promotions: Promotion[] }) 
   const active = promotions[index];
 
   const Figure = (
-    <div className="relative flex h-[420px] w-full items-center justify-center overflow-hidden rounded-2xl bg-[#0A0A0B] md:h-[560px]">
+    <div className="relative h-40 w-full overflow-hidden rounded-2xl bg-muted shadow-md transition-shadow duration-300 sm:h-52 md:h-64">
       <AnimatePresence mode="wait">
         <motion.img
           key={active.id}
@@ -37,9 +38,15 @@ export function PromotionsCarousel({ promotions }: { promotions: Promotion[] }) 
           animate={{ opacity: 1 }}
           exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="max-h-full max-w-full object-contain"
+          className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </AnimatePresence>
+      {active.linkUrl && (
+        <span className="absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
+          Saiba mais
+          <ArrowRight className="size-3.5" />
+        </span>
+      )}
     </div>
   );
 
@@ -57,6 +64,7 @@ export function PromotionsCarousel({ promotions }: { promotions: Promotion[] }) 
               target="_blank"
               rel="noopener noreferrer"
               aria-label={active.title}
+              className="block rounded-2xl transition-shadow hover:shadow-xl"
             >
               {Figure}
             </a>

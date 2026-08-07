@@ -83,6 +83,10 @@ export function PromotionUploadForm() {
           accept=".png,.jpg,.jpeg,.gif,.webp"
           onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
         />
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          Use imagens horizontais (ex: 1600×500px) — o banner na home é baixo e largo, e a
+          imagem é cortada para preencher o espaço.
+        </p>
         {fileError && <p className="mt-1.5 text-sm text-destructive">{fileError}</p>}
       </div>
 
