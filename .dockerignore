@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env*.local
+storage/data
+storage/uploads
+*.log
+.DS_Store
+Dockerfile
+.dockerignore
+fly.toml
