@@ -61,7 +61,7 @@ export const downloads = sqliteTable("downloads", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   fileType: text("file_type", {
-    enum: ["PDF", "XLSX", "DOCX", "ZIP", "EXE", "MSI"],
+    enum: ["PDF", "XLSX", "DOCX", "ZIP", "RAR", "EXE", "MSI"],
   }).notNull(),
   storedFileName: text("stored_file_name").notNull(),
   originalFileName: text("original_file_name").notNull(),

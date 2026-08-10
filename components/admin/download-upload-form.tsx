@@ -69,12 +69,12 @@ export function DownloadUploadForm() {
       </div>
 
       <div>
-        <Label htmlFor="file">Arquivo (PDF, XLSX, DOCX, ZIP, EXE, MSI — até 200MB)</Label>
+        <Label htmlFor="file">Arquivo (PDF, XLSX, DOCX, ZIP, RAR, EXE, MSI — até 200MB)</Label>
         <Input
           id="file"
           type="file"
           className="mt-2"
-          accept=".pdf,.xlsx,.docx,.zip,.exe,.msi"
+          accept=".pdf,.xlsx,.docx,.zip,.rar,.exe,.msi"
           onChange={(e) => setFile(e.target.files?.[0] ?? null)}
         />
         {fileError && <p className="mt-1.5 text-sm text-destructive">{fileError}</p>}

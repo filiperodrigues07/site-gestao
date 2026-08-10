@@ -1,4 +1,4 @@
-export const DOWNLOAD_FILE_TYPES = ["PDF", "XLSX", "DOCX", "ZIP", "EXE", "MSI"] as const;
+export const DOWNLOAD_FILE_TYPES = ["PDF", "XLSX", "DOCX", "ZIP", "RAR", "EXE", "MSI"] as const;
 export type DownloadFileType = (typeof DOWNLOAD_FILE_TYPES)[number];
 
 export const EXTENSION_MAP: Record<string, { type: DownloadFileType; mime: string }> = {
@@ -12,6 +12,7 @@ export const EXTENSION_MAP: Record<string, { type: DownloadFileType; mime: strin
     mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   },
   ".zip": { type: "ZIP", mime: "application/zip" },
+  ".rar": { type: "RAR", mime: "application/vnd.rar" },
   ".exe": { type: "EXE", mime: "application/vnd.microsoft.portable-executable" },
   ".msi": { type: "MSI", mime: "application/x-msi" },
 };

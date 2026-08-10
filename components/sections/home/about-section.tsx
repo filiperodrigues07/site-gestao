@@ -5,7 +5,7 @@ import { RevealGroup } from "@/components/motion/reveal-group";
 import { ShieldCheck, Cpu, Award, Users2 } from "lucide-react";
 
 const stats = [
-  { label: "Anos de experiência", value: "15+" },
+  { label: "Anos de experiência", value: "10+" },
   { label: "Empresas atendidas", value: "500+" },
   { label: "Segmentos de mercado", value: "15" },
   { label: "Satisfação de clientes", value: "98%" },
