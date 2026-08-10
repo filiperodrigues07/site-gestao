@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { verifySession, getCurrentUser } from "@/lib/auth/dal";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { articles } from "@/lib/db/schema";
 import { articleSchema, type ArticleFormValues } from "@/lib/validations/admin/article-schema";
@@ -16,7 +16,7 @@ function splitTags(tags: string): string[] {
 }
 
 export async function createArticle(values: ArticleFormValues) {
-  const user = await getCurrentUser();
+  const user = await requirePermission("artigos");
   const parsed = articleSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -36,7 +36,7 @@ export async function createArticle(values: ArticleFormValues) {
 }
 
 export async function updateArticle(id: number, previousSlug: string, values: ArticleFormValues) {
-  await verifySession();
+  await requirePermission("artigos");
   const parsed = articleSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -63,7 +63,7 @@ export async function updateArticle(id: number, previousSlug: string, values: Ar
 }
 
 export async function deleteArticle(id: number, slug: string) {
-  await verifySession();
+  await requirePermission("artigos");
   await db.delete(articles).where(eq(articles.id, id));
 
   revalidatePath("/base-de-conhecimento");

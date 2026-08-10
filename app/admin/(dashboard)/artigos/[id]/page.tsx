@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ArticleForm } from "@/components/admin/article-form";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { articles } from "@/lib/db/schema";
 
@@ -9,6 +10,7 @@ export default async function EditarArtigoPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePermission("artigos");
   const { id } = await params;
   const [article, categories] = await Promise.all([
     db.query.articles.findFirst({ where: eq(articles.id, Number(id)) }),

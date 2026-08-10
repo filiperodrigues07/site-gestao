@@ -31,7 +31,10 @@ export async function sendContactEmail(payload: ContactFormValues) {
       ? `Nova solicitação de demonstração — ${payload.name}`
       : `Novo contato pelo site — ${payload.name}`;
 
-  await client.emails.send({
+  // O SDK do Resend NÃO lança exceção em erro de API — ele retorna
+  // { data: null, error: {...} }. Se a gente não checar `error` aqui, um
+  // envio que falhou (ex: domínio não verificado) é reportado como sucesso.
+  const { error } = await client.emails.send({
     from: `${siteConfig.name} <${fromEmail}>`,
     to: toEmail,
     replyTo: payload.email,
@@ -47,6 +50,10 @@ export async function sendContactEmail(payload: ContactFormValues) {
       <p>${payload.message.replace(/\n/g, "<br />")}</p>
     `,
   });
+
+  if (error) {
+    throw new Error(`[Resend] ${error.name}: ${error.message}`);
+  }
 
   return { success: true, mode: "sent" as const };
 }

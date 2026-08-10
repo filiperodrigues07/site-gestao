@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { HeroSection } from "@/components/sections/home/hero-section";
 import { PromotionsCarousel } from "@/components/sections/home/promotions-carousel";
 import { AboutSection } from "@/components/sections/home/about-section";
-import { SolutionsSection } from "@/components/sections/home/solutions-section";
+// Seção "Soluções" da home ocultada por ser redundante com a página /solucoes —
+// componente mantido no projeto, só não é renderizado aqui.
+// import { SolutionsSection } from "@/components/sections/home/solutions-section";
+import { DiagnosticQuizSection } from "@/components/sections/home/diagnostic-quiz-section";
 import { DifferentiatorsSection } from "@/components/sections/home/differentiators-section";
 import { CTASection } from "@/components/sections/home/cta-section";
 import { db } from "@/lib/db/client";
@@ -25,7 +28,7 @@ export default async function Home() {
       <HeroSection />
       <PromotionsCarousel promotions={promotions} />
       <AboutSection />
-      <SolutionsSection />
+      <DiagnosticQuizSection />
       <DifferentiatorsSection />
       <CTASection />
     </>

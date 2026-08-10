@@ -3,13 +3,13 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { verifySession } from "@/lib/auth/dal";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { categories } from "@/lib/db/schema";
 import { categorySchema, type CategoryFormValues } from "@/lib/validations/admin/category-schema";
 
 export async function createCategory(values: CategoryFormValues) {
-  await verifySession();
+  await requirePermission("categorias");
   const parsed = categorySchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -25,7 +25,7 @@ export async function createCategory(values: CategoryFormValues) {
 }
 
 export async function updateCategory(id: number, values: CategoryFormValues) {
-  await verifySession();
+  await requirePermission("categorias");
   const parsed = categorySchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -41,7 +41,7 @@ export async function updateCategory(id: number, values: CategoryFormValues) {
 }
 
 export async function deleteCategory(id: number) {
-  await verifySession();
+  await requirePermission("categorias");
 
   try {
     await db.delete(categories).where(eq(categories.id, id));

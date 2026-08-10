@@ -1,7 +1,9 @@
 import { ArticleForm } from "@/components/admin/article-form";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 
 export default async function NovoArtigoPage() {
+  await requirePermission("artigos");
   const categories = await db.query.categories.findMany({ orderBy: (c, { asc }) => asc(c.name) });
 
   return (

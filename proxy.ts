@@ -4,7 +4,7 @@ import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth/session";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (pathname === "/admin/login") return NextResponse.next();
+  if (pathname === "/admin/login" || pathname === "/admin/trocar-senha") return NextResponse.next();
 
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const session = token ? await verifySessionToken(token) : null;

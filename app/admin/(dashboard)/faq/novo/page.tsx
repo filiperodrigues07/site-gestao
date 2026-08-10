@@ -1,7 +1,9 @@
 import { FAQForm } from "@/components/admin/faq-form";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 
 export default async function NovaFAQPage() {
+  await requirePermission("faq");
   const categories = await db.query.categories.findMany({ orderBy: (c, { asc }) => asc(c.name) });
 
   return (

@@ -3,10 +3,12 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { deletePromotion } from "@/lib/actions/promocoes";
 
 export default async function AdminPromocoesPage() {
+  await requirePermission("promocoes");
   const rows = await db.query.promotions.findMany({ orderBy: (p, { asc }) => asc(p.createdAt) });
 
   return (

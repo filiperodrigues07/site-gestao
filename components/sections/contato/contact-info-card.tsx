@@ -1,6 +1,6 @@
 import { Phone, Mail, MapPin } from "lucide-react";
-import { siteConfig, buildWhatsappUrl } from "@/lib/site-config";
-import { WhatsappIcon } from "@/components/shared/social-icons";
+import { siteConfig, buildWhatsappUrl, instagramHandle } from "@/lib/site-config";
+import { WhatsappIcon, InstagramIcon } from "@/components/shared/social-icons";
 
 export function ContactInfoCard() {
   const { contact } = siteConfig;
@@ -32,6 +32,23 @@ export function ContactInfoCard() {
             className="font-medium hover:text-primary"
           >
             {contact.whatsappDisplay}
+          </a>
+        </div>
+      </div>
+
+      <div className="flex items-start gap-4">
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] text-white">
+          <InstagramIcon className="size-5" strokeWidth={1.75} />
+        </span>
+        <div>
+          <p className="text-sm text-muted-foreground">Instagram</p>
+          <a
+            href={siteConfig.social.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium hover:text-primary"
+          >
+            {instagramHandle()}
           </a>
         </div>
       </div>

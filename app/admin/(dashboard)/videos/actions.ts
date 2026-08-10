@@ -3,13 +3,13 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { verifySession, getCurrentUser } from "@/lib/auth/dal";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { videos } from "@/lib/db/schema";
 import { videoSchema, type VideoFormValues } from "@/lib/validations/admin/video-schema";
 
 export async function createVideo(values: VideoFormValues) {
-  const user = await getCurrentUser();
+  const user = await requirePermission("videos");
   const parsed = videoSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -21,7 +21,7 @@ export async function createVideo(values: VideoFormValues) {
 }
 
 export async function updateVideo(id: number, values: VideoFormValues) {
-  await verifySession();
+  await requirePermission("videos");
   const parsed = videoSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -33,7 +33,7 @@ export async function updateVideo(id: number, values: VideoFormValues) {
 }
 
 export async function deleteVideo(id: number) {
-  await verifySession();
+  await requirePermission("videos");
   await db.delete(videos).where(eq(videos.id, id));
 
   revalidatePath("/base-de-conhecimento");

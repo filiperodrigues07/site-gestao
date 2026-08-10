@@ -3,13 +3,13 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { verifySession } from "@/lib/auth/dal";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { faqs } from "@/lib/db/schema";
 import { faqSchema, type FAQFormValues } from "@/lib/validations/admin/faq-schema";
 
 export async function createFAQ(values: FAQFormValues) {
-  await verifySession();
+  await requirePermission("faq");
   const parsed = faqSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -21,7 +21,7 @@ export async function createFAQ(values: FAQFormValues) {
 }
 
 export async function updateFAQ(id: number, values: FAQFormValues) {
-  await verifySession();
+  await requirePermission("faq");
   const parsed = faqSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -33,7 +33,7 @@ export async function updateFAQ(id: number, values: FAQFormValues) {
 }
 
 export async function deleteFAQ(id: number) {
-  await verifySession();
+  await requirePermission("faq");
   await db.delete(faqs).where(eq(faqs.id, id));
 
   revalidatePath("/base-de-conhecimento");

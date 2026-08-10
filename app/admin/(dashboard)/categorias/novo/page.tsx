@@ -1,6 +1,8 @@
 import { CategoryForm } from "@/components/admin/category-form";
+import { requirePermission } from "@/lib/auth/dal";
 
-export default function NovaCategoriaPage() {
+export default async function NovaCategoriaPage() {
+  await requirePermission("categorias");
   return (
     <div>
       <h1 className="font-heading text-2xl font-medium">Nova categoria</h1>

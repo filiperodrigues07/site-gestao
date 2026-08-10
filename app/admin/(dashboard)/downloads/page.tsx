@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { deleteDownload } from "./actions";
 
@@ -14,6 +15,7 @@ function formatSize(bytes: number): string {
 }
 
 export default async function AdminDownloadsPage() {
+  await requirePermission("downloads");
   const rows = await db.query.downloads.findMany({ orderBy: (d, { desc }) => desc(d.createdAt) });
 
   return (

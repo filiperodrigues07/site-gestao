@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { getKbIcon } from "@/components/sections/knowledge-base/kb-icons";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { deleteCategory } from "@/lib/actions/categorias";
 
 export default async function AdminCategoriasPage() {
+  await requirePermission("categorias");
   const rows = await db.query.categories.findMany({ orderBy: (c, { asc }) => asc(c.name) });
 
   return (

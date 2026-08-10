@@ -3,10 +3,12 @@ import { Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { deleteFAQ } from "./actions";
 
 export default async function AdminFAQPage() {
+  await requirePermission("faq");
   const rows = await db.query.faqs.findMany({
     orderBy: (f, { desc }) => desc(f.createdAt),
     with: { category: true },

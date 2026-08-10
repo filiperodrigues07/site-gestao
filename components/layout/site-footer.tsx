@@ -24,7 +24,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="flex size-9 items-center justify-center rounded-full bg-white/5 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] text-white transition-transform hover:scale-110"
               >
                 <InstagramIcon className="size-4" />
               </a>

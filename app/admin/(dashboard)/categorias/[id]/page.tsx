@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { CategoryForm } from "@/components/admin/category-form";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { categories } from "@/lib/db/schema";
 
@@ -9,6 +10,7 @@ export default async function EditarCategoriaPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePermission("categorias");
   const { id } = await params;
   const category = await db.query.categories.findFirst({ where: eq(categories.id, Number(id)) });
   if (!category) notFound();

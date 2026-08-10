@@ -1,6 +1,6 @@
 import { eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { categories, articles, faqs, videos, users } from "@/lib/db/schema";
+import { categories, articles, faqs, videos, downloads, users } from "@/lib/db/schema";
 import { kbCategories } from "@/data/knowledge-base/categories";
 import { kbArticles } from "@/data/knowledge-base/articles";
 import { faqs as kbFaqs } from "@/data/knowledge-base/faqs";
@@ -17,6 +17,7 @@ async function seed() {
         name: "Administrador",
         username: bootstrapUsername,
         passwordHash: bootstrapPasswordHash,
+        isAdmin: true,
       })
       .onConflictDoNothing({ target: users.username });
   } else {
@@ -70,6 +71,9 @@ async function seed() {
       .update(articles)
       .set({ authorId: bootstrapUser.id })
       .where(isNull(articles.authorId));
+    if (!bootstrapUser.isAdmin) {
+      await db.update(users).set({ isAdmin: true }).where(eq(users.id, bootstrapUser.id));
+    }
   }
 
   for (const faq of kbFaqs) {
@@ -100,11 +104,11 @@ async function seed() {
       .update(videos)
       .set({ authorId: bootstrapUser.id })
       .where(isNull(videos.authorId));
+    await db
+      .update(downloads)
+      .set({ authorId: bootstrapUser.id })
+      .where(isNull(downloads.authorId));
   }
-
-  console.info(
-    "[seed] Pulei downloads — nenhum arquivo real existe ainda; suba pelo /admin/downloads."
-  );
 
   console.info("[seed] Concluído.");
 }

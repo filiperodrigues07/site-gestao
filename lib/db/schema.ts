@@ -20,6 +20,8 @@ export const users = sqliteTable("users", {
   name: text("name").notNull(),
   username: text("username").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
+  isAdmin: integer("is_admin", { mode: "boolean" }).notNull().default(false),
+  permissions: text("permissions", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
   ...timestamps,
 });
 
@@ -67,6 +69,7 @@ export const downloads = sqliteTable("downloads", {
   originalFileName: text("original_file_name").notNull(),
   mimeType: text("mime_type").notNull(),
   sizeBytes: integer("size_bytes").notNull(),
+  authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
   ...timestamps,
 });
 
@@ -98,10 +101,15 @@ export const faqsRelations = relations(faqs, ({ one }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   articles: many(articles),
   videos: many(videos),
+  downloads: many(downloads),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
   author: one(users, { fields: [videos.authorId], references: [users.id] }),
+}));
+
+export const downloadsRelations = relations(downloads, ({ one }) => ({
+  author: one(users, { fields: [downloads.authorId], references: [users.id] }),
 }));
 
 export type Category = typeof categories.$inferSelect;

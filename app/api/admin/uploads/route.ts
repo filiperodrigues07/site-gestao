@@ -2,19 +2,21 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth/session";
+import { getUserForApi } from "@/lib/auth/dal";
+import { hasPermission } from "@/lib/auth/permissions";
 import { db } from "@/lib/db/client";
 import { downloads } from "@/lib/db/schema";
 import { downloadMetadataSchema } from "@/lib/validations/admin/download-schema";
 import { EXTENSION_MAP, MAX_UPLOAD_SIZE_BYTES, UPLOAD_DIR } from "@/lib/uploads/constants";
 
 export async function POST(request: Request) {
-  const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  const session = token ? await verifySessionToken(token) : null;
-  if (!session) {
+  const user = await getUserForApi();
+  if (!user) {
     return NextResponse.json({ success: false, errors: { _form: ["Não autenticado"] } }, { status: 401 });
+  }
+  if (!hasPermission(user, "downloads")) {
+    return NextResponse.json({ success: false, errors: { _form: ["Sem permissão"] } }, { status: 403 });
   }
 
   const formData = await request.formData().catch(() => null);
@@ -75,6 +77,7 @@ export async function POST(request: Request) {
       originalFileName: file.name,
       mimeType: resolved.mime,
       sizeBytes: file.size,
+      authorId: user.id,
     })
     .returning();
 

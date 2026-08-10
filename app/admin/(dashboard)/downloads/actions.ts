@@ -5,14 +5,14 @@ import fs from "node:fs/promises";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { verifySession } from "@/lib/auth/dal";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { downloads } from "@/lib/db/schema";
 import { downloadMetadataSchema, type DownloadMetadata } from "@/lib/validations/admin/download-schema";
 import { UPLOAD_DIR } from "@/lib/uploads/constants";
 
 export async function updateDownloadMetadata(id: number, values: DownloadMetadata) {
-  await verifySession();
+  await requirePermission("downloads");
   const parsed = downloadMetadataSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
@@ -24,7 +24,7 @@ export async function updateDownloadMetadata(id: number, values: DownloadMetadat
 }
 
 export async function deleteDownload(id: number) {
-  await verifySession();
+  await requirePermission("downloads");
 
   const row = await db.query.downloads.findFirst({ where: eq(downloads.id, id) });
   if (row) {

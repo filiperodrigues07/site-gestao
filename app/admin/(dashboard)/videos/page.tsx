@@ -3,10 +3,12 @@ import { Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { deleteVideo } from "./actions";
 
 export default async function AdminVideosPage() {
+  await requirePermission("videos");
   const rows = await db.query.videos.findMany({ orderBy: (v, { desc }) => desc(v.createdAt) });
 
   return (

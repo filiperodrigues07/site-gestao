@@ -64,3 +64,8 @@ export function buildWhatsappUrl(message: string = siteConfig.whatsappMessage) {
   const encoded = encodeURIComponent(message);
   return `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encoded}`;
 }
+
+export function instagramHandle() {
+  const slug = siteConfig.social.instagram.split("/").filter(Boolean).pop() ?? "";
+  return `@${slug}`;
+}

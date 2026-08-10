@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { deleteArticle } from "./actions";
 
 export default async function AdminArtigosPage() {
+  await requirePermission("artigos");
   const rows = await db.query.articles.findMany({
     orderBy: (a, { desc }) => desc(a.updatedAt),
     with: { category: true },

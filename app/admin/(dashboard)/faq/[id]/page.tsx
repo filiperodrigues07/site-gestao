@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { FAQForm } from "@/components/admin/faq-form";
+import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { faqs } from "@/lib/db/schema";
 
@@ -9,6 +10,7 @@ export default async function EditarFAQPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePermission("faq");
   const { id } = await params;
   const [faq, categories] = await Promise.all([
     db.query.faqs.findFirst({ where: eq(faqs.id, Number(id)) }),
