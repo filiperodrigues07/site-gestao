@@ -28,18 +28,30 @@ export function PromotionsCarousel({ promotions }: { promotions: Promotion[] }) 
   const active = promotions[index];
 
   const Figure = (
-    <div className="relative h-40 w-full overflow-hidden rounded-2xl bg-muted shadow-md transition-shadow duration-300 sm:h-52 md:h-64">
+    <div className="relative h-48 w-full overflow-hidden rounded-2xl bg-muted shadow-md transition-shadow duration-300 sm:h-60 md:h-72">
       <AnimatePresence mode="wait">
-        <motion.img
+        <motion.div
           key={active.id}
-          src={`/api/promotions/${active.id}/image`}
-          alt={active.title}
           initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+          className="absolute inset-0"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/api/promotions/${active.id}/image`}
+            alt=""
+            aria-hidden
+            className="size-full scale-110 object-cover opacity-60 blur-2xl"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/api/promotions/${active.id}/image`}
+            alt={active.title}
+            className="absolute inset-0 size-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+          />
+        </motion.div>
       </AnimatePresence>
       {active.linkUrl && (
         <span className="absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">

@@ -36,7 +36,7 @@ export default async function AdminPromocoesPage() {
                 <img
                   src={`/api/promotions/${row.id}/image`}
                   alt={row.title}
-                  className="h-14 w-24 rounded-md border border-border object-cover"
+                  className="h-14 w-24 rounded-md border border-border bg-muted object-contain"
                 />
               ),
             },

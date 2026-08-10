@@ -1,0 +1,1 @@
+ALTER TABLE `videos` ADD `author_id` integer REFERENCES users(id) ON DELETE SET NULL;

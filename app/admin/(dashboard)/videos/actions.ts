@@ -3,17 +3,17 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { verifySession } from "@/lib/auth/dal";
+import { verifySession, getCurrentUser } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { videos } from "@/lib/db/schema";
 import { videoSchema, type VideoFormValues } from "@/lib/validations/admin/video-schema";
 
 export async function createVideo(values: VideoFormValues) {
-  await verifySession();
+  const user = await getCurrentUser();
   const parsed = videoSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
 
-  await db.insert(videos).values(parsed.data);
+  await db.insert(videos).values({ ...parsed.data, authorId: user.id });
 
   revalidatePath("/base-de-conhecimento");
   revalidatePath("/admin/videos");

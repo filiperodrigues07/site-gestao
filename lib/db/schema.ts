@@ -52,6 +52,7 @@ export const videos = sqliteTable("videos", {
   description: text("description").notNull(),
   videoUrl: text("video_url").notNull(),
   durationLabel: text("duration_label").notNull(),
+  authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
   ...timestamps,
 });
 
@@ -96,6 +97,11 @@ export const faqsRelations = relations(faqs, ({ one }) => ({
 
 export const usersRelations = relations(users, ({ many }) => ({
   articles: many(articles),
+  videos: many(videos),
+}));
+
+export const videosRelations = relations(videos, ({ one }) => ({
+  author: one(users, { fields: [videos.authorId], references: [users.id] }),
 }));
 
 export type Category = typeof categories.$inferSelect;

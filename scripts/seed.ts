@@ -61,19 +61,20 @@ async function seed() {
       .onConflictDoNothing({ target: articles.slug });
   }
 
-  if (bootstrapUsername) {
-    const bootstrapUser = await db.query.users.findFirst({
-      where: eq(users.username, bootstrapUsername),
-    });
-    if (bootstrapUser) {
-      await db
-        .update(articles)
-        .set({ authorId: bootstrapUser.id })
-        .where(isNull(articles.authorId));
-    }
+  const bootstrapUser = bootstrapUsername
+    ? await db.query.users.findFirst({ where: eq(users.username, bootstrapUsername) })
+    : undefined;
+
+  if (bootstrapUser) {
+    await db
+      .update(articles)
+      .set({ authorId: bootstrapUser.id })
+      .where(isNull(articles.authorId));
   }
 
   for (const faq of kbFaqs) {
+    const existingFaq = await db.query.faqs.findFirst({ where: eq(faqs.question, faq.question) });
+    if (existingFaq) continue;
     const categoryId = faq.categorySlug ? categoryIdBySlug.get(faq.categorySlug) : undefined;
     await db.insert(faqs).values({
       question: faq.question,
@@ -83,12 +84,22 @@ async function seed() {
   }
 
   for (const video of kbVideos) {
+    const existingVideo = await db.query.videos.findFirst({ where: eq(videos.title, video.title) });
+    if (existingVideo) continue;
     await db.insert(videos).values({
       title: video.title,
       description: video.description,
       videoUrl: video.videoUrl,
       durationLabel: video.durationLabel,
+      authorId: bootstrapUser?.id,
     });
+  }
+
+  if (bootstrapUser) {
+    await db
+      .update(videos)
+      .set({ authorId: bootstrapUser.id })
+      .where(isNull(videos.authorId));
   }
 
   console.info(

@@ -7,7 +7,7 @@ import { PhotoLightbox } from "@/components/shared/photo-lightbox";
 import { slideInLeft, slideInRight } from "@/components/motion/motion-tokens";
 
 const stats = [
-  { value: "15+", label: "Anos de experiência" },
+  { value: "10+", label: "Anos de experiência" },
   { value: "500+", label: "Empresas atendidas" },
   { value: "15", label: "Segmentos atendidos" },
   { value: "98%", label: "Satisfação de clientes" },

@@ -84,8 +84,8 @@ export function PromotionUploadForm() {
           onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
         />
         <p className="mt-1.5 text-xs text-muted-foreground">
-          Use imagens horizontais (ex: 1600×500px) — o banner na home é baixo e largo, e a
-          imagem é cortada para preencher o espaço.
+          Use imagens horizontais (ex: 1600×500px) para melhor aproveitamento — a imagem
+          inteira sempre aparece no banner, sem cortes.
         </p>
         {fileError && <p className="mt-1.5 text-sm text-destructive">{fileError}</p>}
       </div>
