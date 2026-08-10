@@ -14,7 +14,7 @@ export function HeroSection() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section className="section-alt relative overflow-hidden pt-20 pb-24 md:pt-28 md:pb-32">
+    <section className="section-alt relative isolate overflow-hidden pt-20 pb-24 md:pt-28 md:pb-32">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[700px] bg-[radial-gradient(ellipse_at_top,var(--brand-blue-900),transparent_65%)] opacity-80"
