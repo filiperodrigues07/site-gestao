@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { requirePermission } from "@/lib/auth/dal";
@@ -29,6 +30,14 @@ export default async function AdminVideosPage() {
           rows={rows}
           columns={[
             { header: "Título", render: (row) => <span className="font-medium">{row.title}</span> },
+            {
+              header: "Origem",
+              render: (row) => (
+                <Badge variant="secondary">
+                  {row.sourceType === "upload" ? "Arquivo enviado" : "YouTube"}
+                </Badge>
+              ),
+            },
             { header: "Duração", render: (row) => row.durationLabel },
           ]}
           actions={(row) => (

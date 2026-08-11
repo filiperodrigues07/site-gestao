@@ -52,7 +52,12 @@ export const videos = sqliteTable("videos", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  videoUrl: text("video_url").notNull(),
+  sourceType: text("source_type", { enum: ["youtube", "upload"] }).notNull().default("youtube"),
+  videoUrl: text("video_url"),
+  storedFileName: text("stored_file_name"),
+  originalFileName: text("original_file_name"),
+  mimeType: text("mime_type"),
+  sizeBytes: integer("size_bytes"),
   durationLabel: text("duration_label").notNull(),
   authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
   ...timestamps,
@@ -84,6 +89,29 @@ export const promotions = sqliteTable("promotions", {
   ...timestamps,
 });
 
+export const updates = sqliteTable("updates", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
+  storedFileName: text("stored_file_name"),
+  originalFileName: text("original_file_name"),
+  mimeType: text("mime_type"),
+  sizeBytes: integer("size_bytes"),
+  ...timestamps,
+});
+
+export const instagramPosts = sqliteTable("instagram_posts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  caption: text("caption").notNull(),
+  postUrl: text("post_url"),
+  storedFileName: text("stored_file_name").notNull(),
+  originalFileName: text("original_file_name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  sizeBytes: integer("size_bytes").notNull(),
+  ...timestamps,
+});
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   articles: many(articles),
   faqs: many(faqs),
@@ -102,6 +130,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   articles: many(articles),
   videos: many(videos),
   downloads: many(downloads),
+  updates: many(updates),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
@@ -112,6 +141,10 @@ export const downloadsRelations = relations(downloads, ({ one }) => ({
   author: one(users, { fields: [downloads.authorId], references: [users.id] }),
 }));
 
+export const updatesRelations = relations(updates, ({ one }) => ({
+  author: one(users, { fields: [updates.authorId], references: [users.id] }),
+}));
+
 export type Category = typeof categories.$inferSelect;
 export type Article = typeof articles.$inferSelect;
 export type FAQ = typeof faqs.$inferSelect;
@@ -119,3 +152,5 @@ export type Video = typeof videos.$inferSelect;
 export type Download = typeof downloads.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type Promotion = typeof promotions.$inferSelect;
+export type Update = typeof updates.$inferSelect;
+export type InstagramPost = typeof instagramPosts.$inferSelect;

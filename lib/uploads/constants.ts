@@ -33,3 +33,16 @@ export const ARTICLE_IMAGES_DIR = "storage/uploads/articles";
 export const ARTICLE_IMAGES_PUBLIC_PATH = "/api/uploads/articles";
 
 export const PROMOTION_IMAGES_DIR = "storage/uploads/promotions";
+
+export const VIDEO_EXTENSION_MAP: Record<string, { mime: string }> = {
+  ".mp4": { mime: "video/mp4" },
+  ".webm": { mime: "video/webm" },
+  ".mov": { mime: "video/quicktime" },
+};
+
+export const MAX_VIDEO_SIZE_BYTES = 500 * 1024 * 1024;
+export const VIDEO_FILES_DIR = "storage/uploads/videos";
+
+export const INSTAGRAM_IMAGES_DIR = "storage/uploads/instagram";
+
+export const UPDATE_IMAGES_DIR = "storage/uploads/novidades";

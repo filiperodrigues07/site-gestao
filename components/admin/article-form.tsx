@@ -133,12 +133,14 @@ export function ArticleForm({
       </div>
 
       <div>
-        <Label>Conteúdo (markdown)</Label>
+        <Label htmlFor="content">Conteúdo (markdown)</Label>
         <div className="mt-2">
           <Controller
             name="content"
             control={control}
-            render={({ field }) => <MarkdownField value={field.value} onChange={field.onChange} />}
+            render={({ field }) => (
+              <MarkdownField id="content" value={field.value} onChange={field.onChange} />
+            )}
           />
         </div>
         {errors.content && <p className="mt-1.5 text-sm text-destructive">{errors.content.message}</p>}

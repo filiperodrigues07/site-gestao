@@ -3,6 +3,7 @@ import Link from "next/link";
 import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +86,7 @@ export default async function ArticlePage({
 
           <Reveal delay={0.15}>
             <div className="prose prose-invert mt-10 max-w-none prose-headings:font-heading prose-headings:font-medium prose-a:text-primary">
-              <ReactMarkdown>{article.content}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{article.content}</ReactMarkdown>
             </div>
           </Reveal>
         </div>

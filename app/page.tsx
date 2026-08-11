@@ -6,7 +6,9 @@ import { AboutSection } from "@/components/sections/home/about-section";
 // componente mantido no projeto, só não é renderizado aqui.
 // import { SolutionsSection } from "@/components/sections/home/solutions-section";
 import { DiagnosticQuizSection } from "@/components/sections/home/diagnostic-quiz-section";
+import { WeeklyUpdatesSection } from "@/components/sections/home/weekly-updates-section";
 import { DifferentiatorsSection } from "@/components/sections/home/differentiators-section";
+import { InstagramFeedSection } from "@/components/sections/home/instagram-feed-section";
 import { CTASection } from "@/components/sections/home/cta-section";
 import { db } from "@/lib/db/client";
 
@@ -22,6 +24,14 @@ export default async function Home() {
   const promotions = await db.query.promotions.findMany({
     orderBy: (p, { asc }) => asc(p.createdAt),
   });
+  const updates = await db.query.updates.findMany({
+    orderBy: (u, { desc }) => desc(u.createdAt),
+    limit: 6,
+  });
+  const instagramPosts = await db.query.instagramPosts.findMany({
+    orderBy: (p, { desc }) => desc(p.createdAt),
+    limit: 6,
+  });
 
   return (
     <>
@@ -29,7 +39,9 @@ export default async function Home() {
       <PromotionsCarousel promotions={promotions} />
       <AboutSection />
       <DiagnosticQuizSection />
+      <WeeklyUpdatesSection updates={updates} />
       <DifferentiatorsSection />
+      <InstagramFeedSection posts={instagramPosts} />
       <CTASection />
     </>
   );

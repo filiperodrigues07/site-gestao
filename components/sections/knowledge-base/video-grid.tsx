@@ -70,14 +70,25 @@ export function VideoGrid({ videos }: { videos: KBVideo[] }) {
               <X className="size-4" />
             </button>
             <div className="aspect-video">
-              <iframe
-                src={activeVideo.videoUrl}
-                title={activeVideo.title}
-                className="size-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                sandbox="allow-scripts allow-same-origin allow-presentation"
-              />
+              {activeVideo.sourceType === "upload" ? (
+                <video
+                  src={`/api/videos/${activeVideo.id}/file`}
+                  controls
+                  autoPlay
+                  className="size-full"
+                >
+                  Seu navegador não suporta reprodução de vídeo.
+                </video>
+              ) : (
+                <iframe
+                  src={activeVideo.videoUrl ?? ""}
+                  title={activeVideo.title}
+                  className="size-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  sandbox="allow-scripts allow-same-origin allow-presentation"
+                />
+              )}
             </div>
           </div>
         </div>

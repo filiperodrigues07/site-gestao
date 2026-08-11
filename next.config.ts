@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     // O proxy (middleware) protege /api/admin/**, incluindo os uploads de
     // downloads/imagens — sem isso, o Next trunca o corpo da requisição em
     // 10MB antes mesmo de chegar na validação da rota.
-    proxyClientMaxBodySize: "200mb",
+    proxyClientMaxBodySize: "500mb",
   },
 };
 

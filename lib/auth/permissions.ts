@@ -5,6 +5,8 @@ export const ADMIN_SECTIONS = [
   { key: "faq", label: "FAQ" },
   { key: "videos", label: "Vídeos" },
   { key: "promocoes", label: "Promoções" },
+  { key: "novidades", label: "Novidades" },
+  { key: "instagram", label: "Instagram" },
 ] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number]["key"];

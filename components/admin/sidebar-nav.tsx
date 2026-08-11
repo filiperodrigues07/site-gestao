@@ -1,5 +1,6 @@
 "use client";
 
+import type { ComponentType } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -12,9 +13,11 @@ import {
   Users,
   Megaphone,
   Trophy,
+  Newspaper,
   LogOut,
   KeyRound,
 } from "lucide-react";
+import { InstagramIcon } from "@/components/shared/social-icons";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/app/admin/actions";
 import type { AdminSection } from "@/lib/auth/permissions";
@@ -27,9 +30,16 @@ const NAV_ITEMS = [
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle, section: "faq" },
   { href: "/admin/videos", label: "Vídeos", icon: Video, section: "videos" },
   { href: "/admin/promocoes", label: "Promoções", icon: Megaphone, section: "promocoes" },
+  { href: "/admin/novidades", label: "Novidades", icon: Newspaper, section: "novidades" },
+  { href: "/admin/instagram", label: "Instagram", icon: InstagramIcon, section: "instagram" },
   { href: "/admin/ranking", label: "Ranking", icon: Trophy, section: null },
   { href: "/admin/usuarios", label: "Usuários", icon: Users, section: "admin-only" },
-] satisfies { href: string; label: string; icon: typeof LayoutDashboard; section: AdminSection | "admin-only" | null }[];
+] satisfies {
+  href: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+  section: AdminSection | "admin-only" | null;
+}[];
 
 export function SidebarNav({
   currentUserName,
