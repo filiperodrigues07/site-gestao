@@ -6,6 +6,7 @@ import {
   getRelatedSolutions,
 } from "@/data/solutions";
 import { SolutionHero } from "@/components/sections/solucoes/solution-hero";
+import { SolutionScreenshots } from "@/components/sections/solucoes/solution-screenshots";
 import { SolutionFeatures } from "@/components/sections/solucoes/solution-features";
 import { SolutionBenefits } from "@/components/sections/solucoes/solution-benefits";
 import { RelatedSolutions } from "@/components/sections/solucoes/related-solutions";
@@ -47,6 +48,7 @@ export default async function SolutionPage({
   return (
     <>
       <SolutionHero solution={solution} />
+      <SolutionScreenshots solution={solution} />
       <SolutionFeatures solution={solution} />
       <SolutionBenefits solution={solution} />
       <RelatedSolutions solutions={related} />

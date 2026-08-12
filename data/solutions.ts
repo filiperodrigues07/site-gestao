@@ -1,6 +1,6 @@
 import type { VendorId } from "./vendors";
 
-export type SolutionCategory = "Gestão" | "Varejo" | "Serviços" | "Indústria" | "RH";
+export type SolutionCategory = "Gestão" | "Varejo" | "Serviços" | "Indústria" | "RH" | "Mobile";
 
 export type Solution = {
   id: string;
@@ -13,6 +13,7 @@ export type Solution = {
   longDescription: string;
   features: string[];
   benefits: string[];
+  screenshots?: string[];
 };
 
 export const solutions: Solution[] = [
@@ -442,6 +443,107 @@ export const solutions: Solution[] = [
       "Menos disputas trabalhistas por transparência no cálculo",
       "Gestão de RH orientada por dados",
       "Redução de custos com retrabalho manual",
+    ],
+  },
+  {
+    id: "chmob-sd",
+    slug: "chmob-sd",
+    name: "CH Mob SD",
+    iconKey: "Smartphone",
+    category: "Mobile",
+    vendor: "ch-sistemas",
+    shortDescription: "Vendas externas offline, direto do celular do seu representante.",
+    longDescription:
+      "Aplicativo mobile para força de vendas externa, com funcionamento offline após a primeira sincronização. O vendedor faz pedidos, consulta preços e estoque, coleta assinatura do cliente e organiza a rota de visitas mesmo sem internet — tudo sincronizado automaticamente com o ERP assim que a conexão volta.",
+    features: [
+      "Pedidos, cotações e venda ambulante direto do celular",
+      "Funciona offline com banco de dados local no dispositivo",
+      "Sincronização automática de produtos, estoque, preços e clientes",
+      "Seleção de tabela de preço e condição de pagamento por cliente",
+      "Assinatura digital do cliente e do vendedor",
+      "Emissão e impressão de boletos em campo",
+      "Consulta de títulos a vencer e vencidos",
+      "Agenda e check-in por rota de visitas, com registro de motivo de não-venda",
+    ],
+    benefits: [
+      "Vendedor nunca para por falta de internet",
+      "Pedido sem erro de digitação, sincronizado na hora",
+      "Mais visitas por dia com rota organizada",
+      "Menos inadimplência com consulta de títulos em campo",
+    ],
+    screenshots: [
+      "/products/chmob-sd/chmob-sd-01-menu.jpg",
+      "/products/chmob-sd/chmob-sd-02-pedido.jpg",
+      "/products/chmob-sd/chmob-sd-03-produto.jpg",
+      "/products/chmob-sd/chmob-sd-04-titulos.jpg",
+      "/products/chmob-sd/chmob-sd-05-rota.jpg",
+      "/products/chmob-sd/chmob-sd-06-checkin.jpg",
+    ],
+  },
+  {
+    id: "chmob-os",
+    slug: "chmob-os",
+    name: "CH Mob OS",
+    iconKey: "ClipboardCheck",
+    category: "Mobile",
+    vendor: "ch-sistemas",
+    shortDescription: "Ordem de serviço completa na mão do técnico, mesmo sem internet.",
+    longDescription:
+      "Aplicativo mobile para prestadores de serviço e técnicos em campo: abertura de OS, diagnóstico, seleção de peças e serviços, fotos de validação e assinatura do cliente direto do celular ou tablet — com operação offline e sincronização automática assim que a conexão retorna.",
+    features: [
+      "Abertura de OS com diagnóstico e seleção de equipamento",
+      "Funciona offline com sincronização automática",
+      "Seleção rápida de produtos e serviços, com leitor de código de barras",
+      "Laudo técnico com foto de validação anexada à OS",
+      "Assinatura digital do cliente e do técnico",
+      "Agenda integrada para organizar o dia em campo",
+      "Acesso a estoque, preços e histórico do cliente em tempo real",
+    ],
+    benefits: [
+      "Técnico não depende de papel nem de voltar à empresa",
+      "Cliente aprova e assina o serviço na hora",
+      "Histórico e fotos ficam registrados na própria OS",
+      "Menos retrabalho entre campo e escritório",
+    ],
+    screenshots: [
+      "/products/chmob-os/chmob-os-01-menu.jpg",
+      "/products/chmob-os/chmob-os-02-abertura.jpg",
+      "/products/chmob-os/chmob-os-03-carrinho.jpg",
+      "/products/chmob-os/chmob-os-04-laudo.jpg",
+      "/products/chmob-os/chmob-os-05-assinatura.jpg",
+    ],
+  },
+  {
+    id: "chmob-bi",
+    slug: "chmob-bi",
+    name: "CH Mob BI",
+    iconKey: "BarChart3",
+    category: "Mobile",
+    vendor: "ch-sistemas",
+    shortDescription: "Indicadores do seu negócio em tempo real, na palma da mão.",
+    longDescription:
+      "Business Intelligence mobile que consulta os dados direto do servidor no momento do acesso: faturamento, contas a pagar e receber, ticket médio e ranking de produtos, sempre atualizados, de onde você estiver.",
+    features: [
+      "Faturamento anual com comparação ao ano anterior",
+      "Saldo de contas caixa e contas bancárias",
+      "Relação de contas a receber e a pagar, com filtro de baixados",
+      "Vendas por representante",
+      "Resumo de vendas diário, mensal e por hora",
+      "Ticket médio, quantidade de documentos faturados e preço médio",
+      "Ranking de produtos por volume de vendas",
+    ],
+    benefits: [
+      "Decisão baseada em dados atualizados na hora",
+      "Acompanhamento do negócio de qualquer lugar",
+      "Menos dependência de relatórios prontos por terceiros",
+      "Visão clara de quem vende mais e o que vende mais",
+    ],
+    screenshots: [
+      "/products/chmob-bi/chmob-bi-01-faturamento.png",
+      "/products/chmob-bi/chmob-bi-02-saldo.png",
+      "/products/chmob-bi/chmob-bi-03-indicadores.png",
+      "/products/chmob-bi/chmob-bi-04-ranking.png",
+      "/products/chmob-bi/chmob-bi-05-receberpagar.png",
     ],
   },
 ];

@@ -15,6 +15,9 @@ import {
   Factory,
   Users,
   Fingerprint,
+  Smartphone,
+  ClipboardCheck,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 
@@ -35,6 +38,9 @@ export const solutionIcons: Record<string, LucideIcon> = {
   Factory,
   Users,
   Fingerprint,
+  Smartphone,
+  ClipboardCheck,
+  BarChart3,
 };
 
 export function getSolutionIcon(iconKey: string): LucideIcon {
