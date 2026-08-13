@@ -191,13 +191,7 @@ export function SidebarNav({
   return (
     <>
       {/* Topbar mobile */}
-      <div className="flex items-center justify-between border-b border-sidebar-border bg-sidebar px-4 py-3 lg:hidden">
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-primary/15">
-            <Image src="/brand/icon.png" alt="" width={298} height={244} className="size-4 w-auto" />
-          </span>
-          <p className="font-heading text-sm font-medium text-sidebar-foreground">Painel administrativo</p>
-        </div>
+      <div className="flex items-center gap-2.5 border-b border-sidebar-border bg-sidebar px-4 py-3 lg:hidden">
         <Button
           type="button"
           variant="ghost"
@@ -207,6 +201,10 @@ export function SidebarNav({
         >
           <Menu className="size-5" />
         </Button>
+        <span className="flex size-8 items-center justify-center rounded-lg bg-primary/15">
+          <Image src="/brand/icon.png" alt="" width={298} height={244} className="size-4 w-auto" />
+        </span>
+        <p className="font-heading text-sm font-medium text-sidebar-foreground">Painel administrativo</p>
       </div>
 
       {/* Drawer mobile */}
