@@ -1,5 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import { Trophy, FileText, Video as VideoIcon, Download as DownloadIcon } from "lucide-react";
+import { getCurrentUser } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { articles, videos, downloads } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,8 @@ const MEDAL_STYLES = [
 ] as const;
 
 export default async function AdminRankingPage() {
+  await getCurrentUser();
+
   const [userRows, articleCounts, videoCounts, downloadCounts] = await Promise.all([
     db.query.users.findMany(),
     db

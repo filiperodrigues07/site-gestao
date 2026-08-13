@@ -1,12 +1,12 @@
+import type { ComponentType } from "react";
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
 
 export function IconBadge({
   icon: Icon,
   className,
   iconClassName,
 }: {
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string; strokeWidth?: number }>;
   className?: string;
   iconClassName?: string;
 }) {

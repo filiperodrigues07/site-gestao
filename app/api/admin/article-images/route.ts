@@ -10,6 +10,7 @@ import {
   ARTICLE_IMAGES_DIR,
   ARTICLE_IMAGES_PUBLIC_PATH,
 } from "@/lib/uploads/constants";
+import { processImageBuffer } from "@/lib/uploads/process-image";
 
 export async function POST(request: Request) {
   const user = await getUserForApi();
@@ -56,7 +57,8 @@ export async function POST(request: Request) {
   const storedFileName = `${randomUUID()}-${safeName}`;
   const uploadDir = path.join(/*turbopackIgnore: true*/ process.cwd(), ARTICLE_IMAGES_DIR);
   await fs.mkdir(uploadDir, { recursive: true });
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const rawBuffer = Buffer.from(await file.arrayBuffer());
+  const buffer = await processImageBuffer(rawBuffer, resolved.mime);
   await fs.writeFile(path.join(uploadDir, storedFileName), buffer);
 
   return NextResponse.json({

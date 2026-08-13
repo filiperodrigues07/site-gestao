@@ -45,6 +45,7 @@ export const solutions: Solution[] = [
       "Menos cliques para cada tarefa do dia a dia",
       "Escalabilidade para crescer com a empresa",
     ],
+    screenshots: ["/products/erp-modules/erp.png"],
   },
   {
     id: "pdv",
@@ -72,6 +73,7 @@ export const solutions: Solution[] = [
       "Recebimento de PIX sem conferência manual",
       "Dados de venda em tempo real",
     ],
+    screenshots: ["/products/erp-modules/pdv.png"],
   },
   {
     id: "supermercados",
@@ -179,6 +181,7 @@ export const solutions: Solution[] = [
       "Previsibilidade de faturamento",
       "Histórico completo por cliente e equipamento",
     ],
+    screenshots: ["/products/erp-modules/ordem-de-servico.png"],
   },
   {
     id: "mecanica-auto-center",
@@ -231,6 +234,7 @@ export const solutions: Solution[] = [
       "Menos tempo parado por manutenção não planejada",
       "Rastreabilidade completa da frota e da carga",
     ],
+    screenshots: ["/products/erp-modules/transportes-e-logistica.png"],
   },
   {
     id: "pet-shop",
@@ -258,6 +262,7 @@ export const solutions: Solution[] = [
       "Histórico completo do animal em um só lugar",
       "Menos esquecimento de vacinas e retornos",
     ],
+    screenshots: ["/products/erp-modules/pet-shop.png"],
   },
   {
     id: "cobranca",
@@ -312,6 +317,7 @@ export const solutions: Solution[] = [
       "Melhor controle de custo por prato",
       "Delivery e presencial na mesma operação",
     ],
+    screenshots: ["/products/erp-modules/bares-e-restaurantes.png"],
   },
   {
     id: "hoteis-e-pousadas",
@@ -389,6 +395,7 @@ export const solutions: Solution[] = [
       "Custo de fabricação sob controle",
       "Rastreabilidade completa do lote produzido",
     ],
+    screenshots: ["/products/erp-modules/pcp.png"],
   },
   {
     id: "crm",

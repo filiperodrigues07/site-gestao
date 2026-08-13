@@ -36,7 +36,7 @@ export function InstagramFeedSection({ posts }: { posts: InstagramPost[] }) {
         </div>
 
         <RevealGroup
-          className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
+          className="scrollbar-hide mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
           stagger={0.05}
         >
           {posts.map((post) => (

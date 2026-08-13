@@ -9,6 +9,7 @@ import { db } from "@/lib/db/client";
 import { updates } from "@/lib/db/schema";
 import { updateSchema } from "@/lib/validations/admin/update-schema";
 import { IMAGE_EXTENSION_MAP, MAX_IMAGE_SIZE_BYTES, UPDATE_IMAGES_DIR } from "@/lib/uploads/constants";
+import { processImageBuffer } from "@/lib/uploads/process-image";
 
 export async function POST(request: Request) {
   const user = await getUserForApi();
@@ -68,14 +69,15 @@ export async function POST(request: Request) {
     const storedFileName = `${randomUUID()}-${safeName}`;
     const uploadDir = path.join(/*turbopackIgnore: true*/ process.cwd(), UPDATE_IMAGES_DIR);
     await fs.mkdir(uploadDir, { recursive: true });
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
+    const buffer = await processImageBuffer(rawBuffer, resolved.mime);
     await fs.writeFile(path.join(uploadDir, storedFileName), buffer);
 
     imageFields = {
       storedFileName,
       originalFileName: file.name,
       mimeType: resolved.mime,
-      sizeBytes: file.size,
+      sizeBytes: buffer.length,
     };
   }
 

@@ -9,10 +9,31 @@ export function SolutionScreenshots({ solution }: { solution: Solution }) {
     return null;
   }
 
+  if (screenshots.length === 1) {
+    return (
+      <section className="py-16 md:py-20">
+        <Container>
+          <Reveal className="relative mx-auto max-w-3xl">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-1/2 -z-10 aspect-square -translate-y-1/2 rounded-full bg-brand-blue-600/20 blur-[100px]"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={screenshots[0]}
+              alt={`Tela do ${solution.name}`}
+              className="h-auto w-full rounded-2xl"
+            />
+          </Reveal>
+        </Container>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 md:py-20">
       <Container>
-        <RevealGroup className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2" stagger={0.05}>
+        <RevealGroup className="scrollbar-hide flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2" stagger={0.05}>
           {screenshots.map((src) => (
             <Reveal key={src} className="w-[220px] shrink-0 snap-start sm:w-[260px]">
               <div className="overflow-hidden rounded-[2rem] border-4 border-white/10 bg-black shadow-xl">

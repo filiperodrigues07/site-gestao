@@ -9,6 +9,7 @@ import { db } from "@/lib/db/client";
 import { instagramPosts } from "@/lib/db/schema";
 import { instagramPostMetadataSchema } from "@/lib/validations/admin/instagram-schema";
 import { IMAGE_EXTENSION_MAP, MAX_IMAGE_SIZE_BYTES, INSTAGRAM_IMAGES_DIR } from "@/lib/uploads/constants";
+import { processImageBuffer } from "@/lib/uploads/process-image";
 
 export async function POST(request: Request) {
   const user = await getUserForApi();
@@ -67,7 +68,8 @@ export async function POST(request: Request) {
   const storedFileName = `${randomUUID()}-${safeName}`;
   const uploadDir = path.join(/*turbopackIgnore: true*/ process.cwd(), INSTAGRAM_IMAGES_DIR);
   await fs.mkdir(uploadDir, { recursive: true });
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const rawBuffer = Buffer.from(await file.arrayBuffer());
+  const buffer = await processImageBuffer(rawBuffer, resolved.mime);
   await fs.writeFile(path.join(uploadDir, storedFileName), buffer);
 
   const [row] = await db
@@ -78,7 +80,7 @@ export async function POST(request: Request) {
       storedFileName,
       originalFileName: file.name,
       mimeType: resolved.mime,
-      sizeBytes: file.size,
+      sizeBytes: buffer.length,
     })
     .returning();
 

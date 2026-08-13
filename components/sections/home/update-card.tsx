@@ -77,7 +77,7 @@ export function UpdateCard({ update }: { update: Update }) {
               />
             </div>
           )}
-          <div className="overflow-y-auto p-6">
+          <div className="scrollbar-hide overflow-y-auto p-6">
             {recent && (
               <Badge variant="secondary" className="bg-primary/15 text-primary">
                 Novo

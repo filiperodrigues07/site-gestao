@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AuthShell } from "@/components/admin/auth-shell";
 import { LoginForm } from "@/components/admin/login-form";
 
 export const metadata: Metadata = {
@@ -9,22 +10,19 @@ export const metadata: Metadata = {
 
 export default function AdminLoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8">
-        <h1 className="font-heading text-xl font-medium">Painel administrativo</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Entre com suas credenciais para gerenciar a Base de Conhecimento.
-        </p>
-        <div className="mt-6">
-          <LoginForm />
-        </div>
+    <AuthShell
+      title="Painel administrativo"
+      description="Entre com suas credenciais para gerenciar a Base de Conhecimento."
+      footer={
         <Link
           href="/admin/trocar-senha"
-          className="mt-6 block text-center text-sm text-muted-foreground hover:text-foreground"
+          className="text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           Trocar senha
         </Link>
-      </div>
-    </div>
+      }
+    >
+      <LoginForm />
+    </AuthShell>
   );
 }

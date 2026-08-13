@@ -1,4 +1,4 @@
-import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, index } from "drizzle-orm/sqlite-core";
 import { sql, relations } from "drizzle-orm";
 
 const timestamps = {
@@ -25,58 +25,78 @@ export const users = sqliteTable("users", {
   ...timestamps,
 });
 
-export const articles = sqliteTable("articles", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  slug: text("slug").notNull().unique(),
-  title: text("title").notNull(),
-  excerpt: text("excerpt").notNull(),
-  content: text("content").notNull(),
-  categoryId: integer("category_id")
-    .notNull()
-    .references(() => categories.id, { onDelete: "restrict" }),
-  authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
-  tags: text("tags", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
-  status: text("status", { enum: ["draft", "published"] }).notNull().default("draft"),
-  ...timestamps,
-});
+export const articles = sqliteTable(
+  "articles",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    slug: text("slug").notNull().unique(),
+    title: text("title").notNull(),
+    excerpt: text("excerpt").notNull(),
+    content: text("content").notNull(),
+    categoryId: integer("category_id")
+      .notNull()
+      .references(() => categories.id, { onDelete: "restrict" }),
+    authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
+    tags: text("tags", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+    status: text("status", { enum: ["draft", "published"] }).notNull().default("draft"),
+    ...timestamps,
+  },
+  (table) => [
+    index("articles_category_id_idx").on(table.categoryId),
+    index("articles_author_id_idx").on(table.authorId),
+    index("articles_status_idx").on(table.status),
+  ]
+);
 
-export const faqs = sqliteTable("faqs", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  question: text("question").notNull(),
-  answer: text("answer").notNull(),
-  categoryId: integer("category_id").references(() => categories.id, { onDelete: "set null" }),
-  ...timestamps,
-});
+export const faqs = sqliteTable(
+  "faqs",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+    categoryId: integer("category_id").references(() => categories.id, { onDelete: "set null" }),
+    ...timestamps,
+  },
+  (table) => [index("faqs_category_id_idx").on(table.categoryId)]
+);
 
-export const videos = sqliteTable("videos", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  sourceType: text("source_type", { enum: ["youtube", "upload"] }).notNull().default("youtube"),
-  videoUrl: text("video_url"),
-  storedFileName: text("stored_file_name"),
-  originalFileName: text("original_file_name"),
-  mimeType: text("mime_type"),
-  sizeBytes: integer("size_bytes"),
-  durationLabel: text("duration_label").notNull(),
-  authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
-  ...timestamps,
-});
+export const videos = sqliteTable(
+  "videos",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    sourceType: text("source_type", { enum: ["youtube", "upload"] }).notNull().default("youtube"),
+    videoUrl: text("video_url"),
+    storedFileName: text("stored_file_name"),
+    originalFileName: text("original_file_name"),
+    mimeType: text("mime_type"),
+    sizeBytes: integer("size_bytes"),
+    durationLabel: text("duration_label").notNull(),
+    authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
+    ...timestamps,
+  },
+  (table) => [index("videos_author_id_idx").on(table.authorId)]
+);
 
-export const downloads = sqliteTable("downloads", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  fileType: text("file_type", {
-    enum: ["PDF", "XLSX", "DOCX", "ZIP", "RAR", "EXE", "MSI"],
-  }).notNull(),
-  storedFileName: text("stored_file_name").notNull(),
-  originalFileName: text("original_file_name").notNull(),
-  mimeType: text("mime_type").notNull(),
-  sizeBytes: integer("size_bytes").notNull(),
-  authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
-  ...timestamps,
-});
+export const downloads = sqliteTable(
+  "downloads",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    fileType: text("file_type", {
+      enum: ["PDF", "XLSX", "DOCX", "ZIP", "RAR", "EXE", "MSI"],
+    }).notNull(),
+    storedFileName: text("stored_file_name").notNull(),
+    originalFileName: text("original_file_name").notNull(),
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
+    ...timestamps,
+  },
+  (table) => [index("downloads_author_id_idx").on(table.authorId)]
+);
 
 export const promotions = sqliteTable("promotions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -89,17 +109,21 @@ export const promotions = sqliteTable("promotions", {
   ...timestamps,
 });
 
-export const updates = sqliteTable("updates", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
-  storedFileName: text("stored_file_name"),
-  originalFileName: text("original_file_name"),
-  mimeType: text("mime_type"),
-  sizeBytes: integer("size_bytes"),
-  ...timestamps,
-});
+export const updates = sqliteTable(
+  "updates",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    authorId: integer("author_id").references(() => users.id, { onDelete: "set null" }),
+    storedFileName: text("stored_file_name"),
+    originalFileName: text("original_file_name"),
+    mimeType: text("mime_type"),
+    sizeBytes: integer("size_bytes"),
+    ...timestamps,
+  },
+  (table) => [index("updates_author_id_idx").on(table.authorId)]
+);
 
 export const instagramPosts = sqliteTable("instagram_posts", {
   id: integer("id").primaryKey({ autoIncrement: true }),

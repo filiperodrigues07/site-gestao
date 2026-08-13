@@ -7,6 +7,7 @@ import { requireAdmin, getCurrentUser } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
+import { rateLimit } from "@/lib/rate-limit";
 import {
   userSchema,
   type UserFormValues,
@@ -93,6 +94,14 @@ export async function changeOwnPassword(values: ChangePasswordFormValues) {
 // atual (em vez de confiar em quem já está logado) e nunca revela se o
 // usuário existe ou não, só se a combinação está certa.
 export async function changePasswordByCredentials(values: ChangePasswordByCredentialsFormValues) {
+  const { success, retryAfterSeconds } = await rateLimit("change-password-by-credentials", {
+    limit: 5,
+    windowMs: 5 * 60 * 1000,
+  });
+  if (!success) {
+    return { error: `Muitas tentativas. Tente novamente em ${retryAfterSeconds}s.` };
+  }
+
   const parsed = changePasswordByCredentialsSchema.safeParse(values);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
