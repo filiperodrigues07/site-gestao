@@ -1,15 +1,29 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { asc, like } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { AdminFilters } from "@/components/admin/admin-filters";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
+import { promotions } from "@/lib/db/schema";
 import { deletePromotion } from "@/lib/actions/promocoes";
 
-export default async function AdminPromocoesPage() {
+export default async function AdminPromocoesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   await requirePermission("promocoes");
-  const rows = await db.query.promotions.findMany({ orderBy: (p, { asc }) => asc(p.createdAt) });
+  const { q } = await searchParams;
+
+  const rows = await db.query.promotions.findMany({
+    where: q ? like(promotions.title, `%${q}%`) : undefined,
+    orderBy: (p) => asc(p.createdAt),
+  });
+  const hasFilters = Boolean(q);
 
   return (
     <div>
@@ -28,6 +42,12 @@ export default async function AdminPromocoesPage() {
       </div>
 
       <div className="mt-6">
+        <Suspense>
+          <AdminFilters searchPlaceholder="Buscar por título..." />
+        </Suspense>
+      </div>
+
+      <div className="mt-4">
         <AdminList
           rows={rows}
           columns={[
@@ -54,7 +74,11 @@ export default async function AdminPromocoesPage() {
             },
           ]}
           actions={(row) => <DeleteButton action={deletePromotion.bind(null, row.id)} />}
-          emptyMessage="Nenhuma promoção cadastrada — o carrossel não aparece na home até que exista pelo menos uma."
+          emptyMessage={
+            hasFilters
+              ? "Nenhuma promoção encontrada para esses filtros."
+              : "Nenhuma promoção cadastrada — o carrossel não aparece na home até que exista pelo menos uma."
+          }
         />
       </div>
     </div>

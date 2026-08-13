@@ -1,17 +1,37 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil, ShieldCheck } from "lucide-react";
+import { and, asc, eq, like, or } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { AdminFilters } from "@/components/admin/admin-filters";
 import { requireAdmin } from "@/lib/auth/dal";
 import { ADMIN_SECTIONS, type AdminSection } from "@/lib/auth/permissions";
 import { db } from "@/lib/db/client";
+import { users } from "@/lib/db/schema";
 import { deleteUser } from "@/lib/actions/usuarios";
 
-export default async function AdminUsuariosPage() {
+export default async function AdminUsuariosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; acesso?: string }>;
+}) {
   await requireAdmin();
-  const rows = await db.query.users.findMany({ orderBy: (u, { asc }) => asc(u.name) });
+  const { q, acesso } = await searchParams;
+
+  const conditions = [];
+  if (q) conditions.push(or(like(users.name, `%${q}%`), like(users.username, `%${q}%`)));
+  if (acesso === "admin" || acesso === "padrao") {
+    conditions.push(eq(users.isAdmin, acesso === "admin"));
+  }
+
+  const rows = await db.query.users.findMany({
+    where: conditions.length ? and(...conditions) : undefined,
+    orderBy: (u) => asc(u.name),
+  });
+  const hasFilters = Boolean(q || acesso);
 
   return (
     <div>
@@ -27,6 +47,25 @@ export default async function AdminUsuariosPage() {
       </div>
 
       <div className="mt-6">
+        <Suspense>
+          <AdminFilters
+            searchPlaceholder="Buscar por nome ou usuário..."
+            filters={[
+              {
+                param: "acesso",
+                label: "Acesso",
+                allLabel: "Acesso: todos",
+                options: [
+                  { value: "admin", label: "Administrador" },
+                  { value: "padrao", label: "Padrão" },
+                ],
+              },
+            ]}
+          />
+        </Suspense>
+      </div>
+
+      <div className="mt-4">
         <AdminList
           rows={rows}
           columns={[
@@ -68,6 +107,9 @@ export default async function AdminUsuariosPage() {
               <DeleteButton action={deleteUser.bind(null, row.id)} />
             </>
           )}
+          emptyMessage={
+            hasFilters ? "Nenhum usuário encontrado para esses filtros." : "Nenhum usuário cadastrado ainda."
+          }
         />
       </div>
     </div>

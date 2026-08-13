@@ -1,16 +1,30 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
+import { asc, like } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { AdminFilters } from "@/components/admin/admin-filters";
 import { getKbIcon } from "@/components/sections/knowledge-base/kb-icons";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
+import { categories } from "@/lib/db/schema";
 import { deleteCategory } from "@/lib/actions/categorias";
 
-export default async function AdminCategoriasPage() {
+export default async function AdminCategoriasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   await requirePermission("categorias");
-  const rows = await db.query.categories.findMany({ orderBy: (c, { asc }) => asc(c.name) });
+  const { q } = await searchParams;
+
+  const rows = await db.query.categories.findMany({
+    where: q ? like(categories.name, `%${q}%`) : undefined,
+    orderBy: (c) => asc(c.name),
+  });
+  const hasFilters = Boolean(q);
 
   return (
     <div>
@@ -26,6 +40,12 @@ export default async function AdminCategoriasPage() {
       </div>
 
       <div className="mt-6">
+        <Suspense>
+          <AdminFilters searchPlaceholder="Buscar por nome..." />
+        </Suspense>
+      </div>
+
+      <div className="mt-4">
         <AdminList
           rows={rows}
           columns={[
@@ -59,6 +79,9 @@ export default async function AdminCategoriasPage() {
               <DeleteButton action={deleteCategory.bind(null, row.id)} />
             </>
           )}
+          emptyMessage={
+            hasFilters ? "Nenhuma categoria encontrada para esses filtros." : "Nenhuma categoria cadastrada ainda."
+          }
         />
       </div>
     </div>

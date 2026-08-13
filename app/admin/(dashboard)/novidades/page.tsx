@@ -1,18 +1,30 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
+import { desc, like } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { AdminFilters } from "@/components/admin/admin-filters";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
+import { updates } from "@/lib/db/schema";
 import { deleteUpdate } from "./actions";
 
-export default async function AdminNovidadesPage() {
+export default async function AdminNovidadesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   await requirePermission("novidades");
+  const { q } = await searchParams;
+
   const rows = await db.query.updates.findMany({
-    orderBy: (u, { desc }) => desc(u.createdAt),
+    where: q ? like(updates.title, `%${q}%`) : undefined,
+    orderBy: (u) => desc(u.createdAt),
     with: { author: true },
   });
+  const hasFilters = Boolean(q);
 
   return (
     <div>
@@ -30,6 +42,12 @@ export default async function AdminNovidadesPage() {
       </div>
 
       <div className="mt-6">
+        <Suspense>
+          <AdminFilters searchPlaceholder="Buscar por título..." />
+        </Suspense>
+      </div>
+
+      <div className="mt-4">
         <AdminList
           rows={rows}
           columns={[
@@ -65,7 +83,11 @@ export default async function AdminNovidadesPage() {
               <DeleteButton action={deleteUpdate.bind(null, row.id)} />
             </>
           )}
-          emptyMessage="Nenhuma novidade cadastrada — a seção não aparece na home até que exista pelo menos uma."
+          emptyMessage={
+            hasFilters
+              ? "Nenhuma novidade encontrada para esses filtros."
+              : "Nenhuma novidade cadastrada — a seção não aparece na home até que exista pelo menos uma."
+          }
         />
       </div>
     </div>

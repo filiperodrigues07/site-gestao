@@ -1,11 +1,16 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
+import { and, desc, eq, like } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { AdminFilters } from "@/components/admin/admin-filters";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
+import { downloads } from "@/lib/db/schema";
+import { DOWNLOAD_FILE_TYPES } from "@/lib/uploads/constants";
 import { deleteDownload } from "./actions";
 
 function formatSize(bytes: number): string {
@@ -14,9 +19,25 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default async function AdminDownloadsPage() {
+export default async function AdminDownloadsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; type?: string }>;
+}) {
   await requirePermission("downloads");
-  const rows = await db.query.downloads.findMany({ orderBy: (d, { desc }) => desc(d.createdAt) });
+  const { q, type } = await searchParams;
+
+  const conditions = [];
+  if (q) conditions.push(like(downloads.title, `%${q}%`));
+  if (type && (DOWNLOAD_FILE_TYPES as readonly string[]).includes(type)) {
+    conditions.push(eq(downloads.fileType, type as (typeof DOWNLOAD_FILE_TYPES)[number]));
+  }
+
+  const rows = await db.query.downloads.findMany({
+    where: conditions.length ? and(...conditions) : undefined,
+    orderBy: (d) => desc(d.createdAt),
+  });
+  const hasFilters = Boolean(q || type);
 
   return (
     <div>
@@ -32,6 +53,22 @@ export default async function AdminDownloadsPage() {
       </div>
 
       <div className="mt-6">
+        <Suspense>
+          <AdminFilters
+            searchPlaceholder="Buscar por título..."
+            filters={[
+              {
+                param: "type",
+                label: "Tipo",
+                allLabel: "Tipo: todos",
+                options: DOWNLOAD_FILE_TYPES.map((t) => ({ value: t, label: t })),
+              },
+            ]}
+          />
+        </Suspense>
+      </div>
+
+      <div className="mt-4">
         <AdminList
           rows={rows}
           columns={[
@@ -54,6 +91,9 @@ export default async function AdminDownloadsPage() {
               <DeleteButton action={deleteDownload.bind(null, row.id)} />
             </>
           )}
+          emptyMessage={
+            hasFilters ? "Nenhum arquivo encontrado para esses filtros." : "Nenhum arquivo cadastrado ainda."
+          }
         />
       </div>
     </div>

@@ -1,16 +1,34 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
+import { and, desc, eq, like } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { AdminFilters } from "@/components/admin/admin-filters";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
+import { videos } from "@/lib/db/schema";
 import { deleteVideo } from "./actions";
 
-export default async function AdminVideosPage() {
+export default async function AdminVideosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; origem?: string }>;
+}) {
   await requirePermission("videos");
-  const rows = await db.query.videos.findMany({ orderBy: (v, { desc }) => desc(v.createdAt) });
+  const { q, origem } = await searchParams;
+
+  const conditions = [];
+  if (q) conditions.push(like(videos.title, `%${q}%`));
+  if (origem === "youtube" || origem === "upload") conditions.push(eq(videos.sourceType, origem));
+
+  const rows = await db.query.videos.findMany({
+    where: conditions.length ? and(...conditions) : undefined,
+    orderBy: (v) => desc(v.createdAt),
+  });
+  const hasFilters = Boolean(q || origem);
 
   return (
     <div>
@@ -26,6 +44,25 @@ export default async function AdminVideosPage() {
       </div>
 
       <div className="mt-6">
+        <Suspense>
+          <AdminFilters
+            searchPlaceholder="Buscar por título..."
+            filters={[
+              {
+                param: "origem",
+                label: "Origem",
+                allLabel: "Origem: todas",
+                options: [
+                  { value: "youtube", label: "YouTube" },
+                  { value: "upload", label: "Arquivo enviado" },
+                ],
+              },
+            ]}
+          />
+        </Suspense>
+      </div>
+
+      <div className="mt-4">
         <AdminList
           rows={rows}
           columns={[
@@ -55,6 +92,9 @@ export default async function AdminVideosPage() {
               <DeleteButton action={deleteVideo.bind(null, row.id)} />
             </>
           )}
+          emptyMessage={
+            hasFilters ? "Nenhum vídeo encontrado para esses filtros." : "Nenhum vídeo cadastrado ainda."
+          }
         />
       </div>
     </div>

@@ -1,18 +1,38 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
+import { and, desc, eq, like } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { AdminFilters } from "@/components/admin/admin-filters";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
+import { faqs } from "@/lib/db/schema";
 import { deleteFAQ } from "./actions";
 
-export default async function AdminFAQPage() {
+export default async function AdminFAQPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; categoria?: string }>;
+}) {
   await requirePermission("faq");
-  const rows = await db.query.faqs.findMany({
-    orderBy: (f, { desc }) => desc(f.createdAt),
-    with: { category: true },
-  });
+  const { q, categoria } = await searchParams;
+
+  const categoryId = categoria ? Number(categoria) : undefined;
+  const conditions = [];
+  if (q) conditions.push(like(faqs.question, `%${q}%`));
+  if (categoryId && Number.isInteger(categoryId)) conditions.push(eq(faqs.categoryId, categoryId));
+
+  const [rows, categories] = await Promise.all([
+    db.query.faqs.findMany({
+      where: conditions.length ? and(...conditions) : undefined,
+      orderBy: (f) => desc(f.createdAt),
+      with: { category: true },
+    }),
+    db.query.categories.findMany({ orderBy: (c, { asc }) => asc(c.name) }),
+  ]);
+  const hasFilters = Boolean(q || categoria);
 
   return (
     <div>
@@ -28,6 +48,22 @@ export default async function AdminFAQPage() {
       </div>
 
       <div className="mt-6">
+        <Suspense>
+          <AdminFilters
+            searchPlaceholder="Buscar por pergunta..."
+            filters={[
+              {
+                param: "categoria",
+                label: "Categoria",
+                allLabel: "Categoria: todas",
+                options: categories.map((c) => ({ value: String(c.id), label: c.name })),
+              },
+            ]}
+          />
+        </Suspense>
+      </div>
+
+      <div className="mt-4">
         <AdminList
           rows={rows}
           columns={[
@@ -49,6 +85,9 @@ export default async function AdminFAQPage() {
               <DeleteButton action={deleteFAQ.bind(null, row.id)} />
             </>
           )}
+          emptyMessage={
+            hasFilters ? "Nenhuma pergunta encontrada para esses filtros." : "Nenhuma pergunta cadastrada ainda."
+          }
         />
       </div>
     </div>
