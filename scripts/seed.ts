@@ -1,4 +1,5 @@
-import { eq, isNull } from "drizzle-orm";
+import { eq, isNull, sql } from "drizzle-orm";
+import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 import { db } from "@/lib/db/client";
 import { categories, articles, faqs, videos, downloads, users } from "@/lib/db/schema";
 import { kbCategories } from "@/data/knowledge-base/categories";
@@ -6,10 +7,18 @@ import { kbArticles } from "@/data/knowledge-base/articles";
 import { faqs as kbFaqs } from "@/data/knowledge-base/faqs";
 import { kbVideos } from "@/data/knowledge-base/videos";
 
+async function count(table: SQLiteTable) {
+  const [row] = await db.select({ value: sql<number>`count(*)` }).from(table);
+  return row.value;
+}
+
 async function seed() {
   const bootstrapUsername = process.env.ADMIN_USERNAME;
   const bootstrapPasswordHash = process.env.ADMIN_PASSWORD_HASH;
 
+  // O usuário admin de bootstrap é uma rede de segurança (garante que sempre
+  // dá pra entrar no painel) — continua rodando toda vez, sem duplicar,
+  // graças ao onConflictDoNothing por username.
   if (bootstrapUsername && bootstrapPasswordHash) {
     await db
       .insert(users)
@@ -26,30 +35,36 @@ async function seed() {
     );
   }
 
-  for (const category of kbCategories) {
-    await db
-      .insert(categories)
-      .values({
+  // A partir daqui, cada tabela só recebe os dados de exemplo se estiver
+  // completamente vazia — ou seja, só na primeira instalação. Depois disso
+  // o conteúdo passa a ser 100% gerenciado pelo painel: se um admin apagar
+  // um artigo/categoria/FAQ/vídeo de exemplo, ele não deve voltar no
+  // próximo deploy ou reinício do servidor.
+  const categoryCount = await count(categories);
+  if (categoryCount === 0) {
+    for (const category of kbCategories) {
+      await db.insert(categories).values({
         slug: category.slug,
         name: category.name,
         description: category.description,
         iconKey: category.iconKey,
-      })
-      .onConflictDoNothing({ target: categories.slug });
+      });
+    }
+    console.info(`[seed] ${kbCategories.length} categorias de exemplo inseridas.`);
   }
 
   const categoryRows = await db.query.categories.findMany();
   const categoryIdBySlug = new Map(categoryRows.map((c) => [c.slug, c.id]));
 
-  for (const article of kbArticles) {
-    const categoryId = categoryIdBySlug.get(article.categorySlug);
-    if (!categoryId) {
-      console.warn(`[seed] Categoria "${article.categorySlug}" não encontrada para o artigo "${article.slug}" — pulando.`);
-      continue;
-    }
-    await db
-      .insert(articles)
-      .values({
+  const articleCount = await count(articles);
+  if (articleCount === 0) {
+    for (const article of kbArticles) {
+      const categoryId = categoryIdBySlug.get(article.categorySlug);
+      if (!categoryId) {
+        console.warn(`[seed] Categoria "${article.categorySlug}" não encontrada para o artigo "${article.slug}" — pulando.`);
+        continue;
+      }
+      await db.insert(articles).values({
         slug: article.slug,
         title: article.title,
         excerpt: article.excerpt,
@@ -58,8 +73,9 @@ async function seed() {
         tags: article.tags,
         status: "published",
         updatedAt: article.updatedAt,
-      })
-      .onConflictDoNothing({ target: articles.slug });
+      });
+    }
+    console.info(`[seed] ${kbArticles.length} artigos de exemplo inseridos.`);
   }
 
   const bootstrapUser = bootstrapUsername
@@ -76,27 +92,31 @@ async function seed() {
     }
   }
 
-  for (const faq of kbFaqs) {
-    const existingFaq = await db.query.faqs.findFirst({ where: eq(faqs.question, faq.question) });
-    if (existingFaq) continue;
-    const categoryId = faq.categorySlug ? categoryIdBySlug.get(faq.categorySlug) : undefined;
-    await db.insert(faqs).values({
-      question: faq.question,
-      answer: faq.answer,
-      categoryId: categoryId ?? null,
-    });
+  const faqCount = await count(faqs);
+  if (faqCount === 0) {
+    for (const faq of kbFaqs) {
+      const categoryId = faq.categorySlug ? categoryIdBySlug.get(faq.categorySlug) : undefined;
+      await db.insert(faqs).values({
+        question: faq.question,
+        answer: faq.answer,
+        categoryId: categoryId ?? null,
+      });
+    }
+    console.info(`[seed] ${kbFaqs.length} perguntas de FAQ de exemplo inseridas.`);
   }
 
-  for (const video of kbVideos) {
-    const existingVideo = await db.query.videos.findFirst({ where: eq(videos.title, video.title) });
-    if (existingVideo) continue;
-    await db.insert(videos).values({
-      title: video.title,
-      description: video.description,
-      videoUrl: video.videoUrl,
-      durationLabel: video.durationLabel,
-      authorId: bootstrapUser?.id,
-    });
+  const videoCount = await count(videos);
+  if (videoCount === 0) {
+    for (const video of kbVideos) {
+      await db.insert(videos).values({
+        title: video.title,
+        description: video.description,
+        videoUrl: video.videoUrl,
+        durationLabel: video.durationLabel,
+        authorId: bootstrapUser?.id,
+      });
+    }
+    console.info(`[seed] ${kbVideos.length} vídeos de exemplo inseridos.`);
   }
 
   if (bootstrapUser) {

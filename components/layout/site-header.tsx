@@ -16,7 +16,14 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    // Limites diferentes para recolher/expandir (com folga entre eles) —
+    // um único limite fixo faz o cabeçalho tremer, já que a rolagem oscila
+    // uns px pra cima e pra baixo bem perto do topo e cruza o limite várias
+    // vezes seguidas, reiniciando a transição de altura a cada cruzamento.
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled((current) => (current ? y > 4 : y > 32));
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
