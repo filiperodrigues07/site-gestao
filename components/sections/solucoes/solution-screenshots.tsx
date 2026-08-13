@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { SimpleLightbox } from "@/components/shared/simple-lightbox";
 import { Reveal } from "@/components/motion/reveal";
@@ -9,9 +10,36 @@ import type { Solution } from "@/data/solutions";
 
 type DragState = { isDown: boolean; startX: number; scrollLeft: number; moved: boolean };
 
+const SCROLL_STEP = 280;
+
 export function SolutionScreenshots({ solution }: { solution: Solution }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const dragState = useRef<DragState>({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  function updateScrollState() {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState);
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, []);
+
+  function scrollByStep(direction: 1 | -1) {
+    scrollRef.current?.scrollBy({ left: direction * SCROLL_STEP, behavior: "smooth" });
+  }
 
   function onPointerDown(e: PointerEvent<HTMLDivElement>) {
     const el = scrollRef.current;
@@ -76,31 +104,52 @@ export function SolutionScreenshots({ solution }: { solution: Solution }) {
   return (
     <section className="py-16 md:py-20">
       <Container>
-        <div
-          ref={scrollRef}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerLeave={onPointerUp}
-          className="scrollbar-hide flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-2 active:cursor-grabbing"
-        >
-          <RevealGroup className="contents" stagger={0.05}>
-            {screenshots.map((src) => (
-              <Reveal key={src} className="w-[220px] shrink-0 snap-start sm:w-[260px]">
-                <SimpleLightbox src={src} alt={`Tela do ${solution.name}`} suppressClick={wasDragging}>
-                  <div className="overflow-hidden rounded-[2rem] border-4 border-white/10 bg-black shadow-xl">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={src}
-                      alt={`Tela do ${solution.name}`}
-                      draggable={false}
-                      className="h-auto w-full select-none"
-                    />
-                  </div>
-                </SimpleLightbox>
-              </Reveal>
-            ))}
-          </RevealGroup>
+        <div className="relative">
+          <div
+            ref={scrollRef}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerLeave={onPointerUp}
+            className="scrollbar-hide flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pr-6 pb-2 active:cursor-grabbing lg:pr-8 [mask-image:linear-gradient(to_right,black_85%,transparent_100%)]"
+          >
+            <RevealGroup className="contents" stagger={0.05}>
+              {screenshots.map((src) => (
+                <Reveal key={src} className="w-[220px] shrink-0 snap-start sm:w-[260px]">
+                  <SimpleLightbox src={src} alt={`Tela do ${solution.name}`} suppressClick={wasDragging}>
+                    <div className="overflow-hidden rounded-[2rem] border-4 border-white/10 bg-black shadow-xl">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src}
+                        alt={`Tela do ${solution.name}`}
+                        draggable={false}
+                        className="h-auto w-full select-none"
+                      />
+                    </div>
+                  </SimpleLightbox>
+                </Reveal>
+              ))}
+            </RevealGroup>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => scrollByStep(-1)}
+            aria-label="Ver telas anteriores"
+            disabled={!canScrollLeft}
+            className="absolute top-1/2 left-0 hidden size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground shadow-lg ring-1 ring-white/10 transition-opacity duration-200 hover:bg-muted md:flex disabled:pointer-events-none disabled:opacity-0"
+          >
+            <ChevronLeft className="size-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollByStep(1)}
+            aria-label="Ver mais telas"
+            disabled={!canScrollRight}
+            className="absolute top-1/2 right-0 hidden size-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground shadow-lg ring-1 ring-white/10 transition-opacity duration-200 hover:bg-muted md:flex disabled:pointer-events-none disabled:opacity-0"
+          >
+            <ChevronRight className="size-5" />
+          </button>
         </div>
       </Container>
     </section>
