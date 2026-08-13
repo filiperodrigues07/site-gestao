@@ -71,3 +71,38 @@ export async function deleteArticle(id: number, slug: string) {
   revalidatePath("/admin/artigos");
   return {};
 }
+
+async function findAvailableSlug(baseSlug: string): Promise<string> {
+  let candidate = `${baseSlug}-copia`;
+  let suffix = 2;
+  while (await db.query.articles.findFirst({ where: eq(articles.slug, candidate) })) {
+    candidate = `${baseSlug}-copia-${suffix}`;
+    suffix += 1;
+  }
+  return candidate;
+}
+
+export async function duplicateArticle(id: number) {
+  const user = await requirePermission("artigos");
+  const source = await db.query.articles.findFirst({ where: eq(articles.id, id) });
+  if (!source) return { error: "Artigo não encontrado" };
+
+  const slug = await findAvailableSlug(source.slug);
+
+  const [copy] = await db
+    .insert(articles)
+    .values({
+      slug,
+      title: `${source.title} (cópia)`,
+      excerpt: source.excerpt,
+      content: source.content,
+      categoryId: source.categoryId,
+      tags: source.tags,
+      status: "draft",
+      authorId: user.id,
+    })
+    .returning();
+
+  revalidatePath("/admin/artigos");
+  redirect(`/admin/artigos/${copy.id}`);
+}

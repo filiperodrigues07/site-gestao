@@ -1,35 +1,41 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
-import { and, desc, like, or, eq } from "drizzle-orm";
+import { and, asc, desc, like, or, eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { DuplicateButton } from "@/components/admin/duplicate-button";
 import { AdminFilters } from "@/components/admin/admin-filters";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { articles } from "@/lib/db/schema";
-import { deleteArticle } from "./actions";
+import { deleteArticle, duplicateArticle } from "./actions";
 
 export default async function AdminArtigosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; categoria?: string }>;
 }) {
   await requirePermission("artigos");
-  const { q, status } = await searchParams;
+  const { q, status, categoria } = await searchParams;
 
+  const categoryId = categoria ? Number(categoria) : undefined;
   const conditions = [];
   if (q) conditions.push(or(like(articles.title, `%${q}%`), like(articles.excerpt, `%${q}%`)));
   if (status === "draft" || status === "published") conditions.push(eq(articles.status, status));
+  if (categoryId && Number.isInteger(categoryId)) conditions.push(eq(articles.categoryId, categoryId));
 
-  const rows = await db.query.articles.findMany({
-    where: conditions.length ? and(...conditions) : undefined,
-    orderBy: (a) => desc(a.updatedAt),
-    with: { category: true, author: true },
-  });
-  const hasFilters = Boolean(q || status);
+  const [rows, categories] = await Promise.all([
+    db.query.articles.findMany({
+      where: conditions.length ? and(...conditions) : undefined,
+      orderBy: (a) => desc(a.updatedAt),
+      with: { category: true, author: true },
+    }),
+    db.query.categories.findMany({ orderBy: (c) => asc(c.name) }),
+  ]);
+  const hasFilters = Boolean(q || status || categoria);
 
   return (
     <div>
@@ -57,6 +63,12 @@ export default async function AdminArtigosPage({
                   { value: "published", label: "Publicado" },
                   { value: "draft", label: "Rascunho" },
                 ],
+              },
+              {
+                param: "categoria",
+                label: "Categoria",
+                allLabel: "Categoria: todas",
+                options: categories.map((c) => ({ value: String(c.id), label: c.name })),
               },
             ]}
           />
@@ -95,6 +107,7 @@ export default async function AdminArtigosPage({
               >
                 <Pencil className="size-4" />
               </Button>
+              <DuplicateButton action={duplicateArticle.bind(null, row.id)} />
               <DeleteButton action={deleteArticle.bind(null, row.id, row.slug)} />
             </>
           )}
