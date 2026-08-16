@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { Menu, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,6 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
@@ -34,10 +35,11 @@ export function MobileNav() {
         <Menu className="size-5" />
       </SheetTrigger>
       <SheetContent side="right" className="w-72">
-        <SheetHeader>
+        <SheetHeader className="flex-row items-center justify-between space-y-0">
           <SheetTitle className="font-heading text-lg">
             {siteConfig.shortName}
           </SheetTitle>
+          <ThemeToggle className="mr-8" />
         </SheetHeader>
         <nav className="mt-4 flex flex-col gap-1 px-4">
           {siteConfig.nav.map((item) => {
@@ -63,10 +65,11 @@ export function MobileNav() {
           <Button
             nativeButton={false}
             render={
-              <Link href="/contato?tipo=demo" onClick={() => setOpen(false)} />
+              <Link href="/area-cliente" onClick={() => setOpen(false)} />
             }
           >
-            Solicitar Demonstração
+            <UserRound className="size-4" />
+            Área do cliente
           </Button>
         </div>
       </SheetContent>

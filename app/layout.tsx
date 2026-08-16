@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteChrome } from "@/components/layout/site-chrome";
+import { ThemeProvider } from "@/components/theme-provider";
 import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
@@ -77,6 +78,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
@@ -84,8 +86,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        <SiteChrome>{children}</SiteChrome>
-        <Toaster />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <SiteChrome>{children}</SiteChrome>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

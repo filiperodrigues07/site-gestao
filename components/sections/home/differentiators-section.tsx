@@ -23,7 +23,7 @@ export function DifferentiatorsSection() {
           {differentiators.map((item) => {
             const Icon = getDifferentiatorIcon(item.iconKey);
             return (
-              <Reveal key={item.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <Reveal key={item.id} className="rounded-2xl border border-border bg-foreground/[0.03] p-6">
                 <IconBadge icon={Icon} className="bg-primary/15" />
                 <h3 className="mt-5 font-heading text-lg font-medium">
                   {item.title}

@@ -79,7 +79,7 @@ export function MissionVisionValuesSection() {
               key={item.id}
               id={item.id}
               as="div"
-              className="scroll-mt-24 rounded-2xl border border-white/10 bg-white/[0.03] p-8"
+              className="scroll-mt-24 rounded-2xl border border-border bg-foreground/[0.03] p-8"
             >
               <item.icon className="size-7 text-primary" strokeWidth={1.5} />
               <h3 className="mt-5 font-heading text-xl font-medium">{item.title}</h3>
@@ -98,7 +98,7 @@ export function MissionVisionValuesSection() {
           {values.map((value) => (
             <Reveal
               key={value.title}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+              className="rounded-2xl border border-border bg-foreground/[0.03] p-6"
             >
               <value.icon className="size-6 text-primary" strokeWidth={1.5} />
               <h4 className="mt-4 font-heading text-base font-medium">{value.title}</h4>

@@ -7,9 +7,9 @@ import { FloatingWhatsappButton } from "./floating-whatsapp-button";
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin");
+  const isBareLayout = pathname?.startsWith("/admin") || pathname?.startsWith("/area-cliente");
 
-  if (isAdmin) return <main className="flex-1">{children}</main>;
+  if (isBareLayout) return <main className="flex-1">{children}</main>;
 
   return (
     <>

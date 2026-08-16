@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/shared/container";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { Logo } from "@/components/layout/logo";
-import { siteConfig, buildWhatsappUrl } from "@/lib/site-config";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
-import { WhatsappIcon } from "@/components/shared/social-icons";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -64,24 +65,16 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           <Button
-            variant="ghost"
+            variant="outline"
             nativeButton={false}
             className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
-            render={
-              <a href={buildWhatsappUrl()} target="_blank" rel="noopener noreferrer" />
-            }
+            render={<Link href="/area-cliente" />}
           >
-            <WhatsappIcon className="size-4" />
-            WhatsApp
-          </Button>
-          <Button
-            nativeButton={false}
-            className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/25 active:translate-y-0"
-            render={<Link href="/contato?tipo=demo" />}
-          >
-            Solicitar Demonstração
+            <UserRound className="size-4" />
+            Área do cliente
           </Button>
         </div>
 

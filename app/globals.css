@@ -71,7 +71,8 @@
 
 :root {
   /* Institutional blue scale, sampled directly from the Gestão logo (public/logo.png,
-     dominant pixel color #009cd9) — this is the real brand color, not an approximation. */
+     dominant pixel color #009cd9) — this is the real brand color, not an approximation.
+     Identical in both themes; only the neutrals below flip between light and dark. */
   --brand-blue-50: #ebf9ff;
   --brand-blue-100: #cdf1fe;
   --brand-blue-200: #96e1fd;
@@ -83,6 +84,43 @@
   --brand-blue-800: #024e69;
   --brand-blue-900: #02374b;
 
+  /* Tema claro (padrão). O escuro — o visual original do site — vive em .dark logo abaixo. */
+  --background: #ffffff;
+  --foreground: #0a0a0b;
+  --surface-alt: #f4f7f9;
+  --card: #ffffff;
+  --card-foreground: #0a0a0b;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0b;
+  --primary: var(--brand-blue-500);
+  --primary-foreground: #ffffff;
+  --secondary: #f0f1f3;
+  --secondary-foreground: #18181b;
+  --muted: #f0f1f3;
+  --muted-foreground: #6b6f76;
+  --accent: var(--brand-blue-50);
+  --accent-foreground: var(--brand-blue-900);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: rgb(0 0 0 / 10%);
+  --input: rgb(0 0 0 / 14%);
+  --ring: var(--brand-blue-500);
+  --chart-1: oklch(0.269 0 0);
+  --chart-2: oklch(0.371 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.556 0 0);
+  --chart-5: oklch(0.72 0 0);
+  --radius: 0.75rem;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #0a0a0b;
+  --sidebar-primary: var(--brand-blue-500);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0f1f3;
+  --sidebar-accent-foreground: #18181b;
+  --sidebar-border: rgb(0 0 0 / 10%);
+  --sidebar-ring: var(--brand-blue-500);
+}
+
+.dark {
   --background: #0a0a0b;
   --foreground: #fafafa;
   --surface-alt: #0d0f13;
@@ -107,7 +145,6 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.75rem;
   --sidebar: #131316;
   --sidebar-foreground: #fafafa;
   --sidebar-primary: var(--brand-blue-500);

@@ -1,9 +1,23 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth/session";
+import { PORTAL_SESSION_COOKIE } from "@/lib/auth/portal-session";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Área do cliente tem sessão/cookie totalmente separados do admin.
+  if (pathname.startsWith("/area-cliente") || pathname.startsWith("/api/area-cliente")) {
+    if (pathname === "/area-cliente/login") return NextResponse.next();
+
+    const portalToken = request.cookies.get(PORTAL_SESSION_COOKIE)?.value;
+    const portalSession = portalToken ? await verifySessionToken(portalToken) : null;
+    if (!portalSession) {
+      return NextResponse.redirect(new URL("/area-cliente/login", request.url));
+    }
+    return NextResponse.next();
+  }
+
   if (pathname === "/admin/login" || pathname === "/admin/trocar-senha") return NextResponse.next();
 
   const token = request.cookies.get(SESSION_COOKIE)?.value;
@@ -16,5 +30,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/area-cliente/:path*", "/api/area-cliente/:path*"],
 };

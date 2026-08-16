@@ -10,7 +10,7 @@ export function SiteFooter() {
   const featuredSolutions = solutions.slice(0, 6);
 
   return (
-    <footer className="section-dark border-t border-white/10">
+    <footer className="section-dark border-t border-border">
       <Container className="py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
@@ -33,7 +33,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="flex size-9 items-center justify-center rounded-full bg-white/5 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                className="flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
               >
                 <LinkedinIcon className="size-4" />
               </a>
@@ -42,7 +42,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="flex size-9 items-center justify-center rounded-full bg-white/5 text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                className="flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
               >
                 <FacebookIcon className="size-4" />
               </a>
@@ -128,7 +128,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-muted-foreground md:flex-row">
+        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-sm text-muted-foreground md:flex-row">
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. Todos os direitos
             reservados.

@@ -150,7 +150,7 @@ export function DiagnosticQuizSection() {
             </p>
           )}
 
-          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-10">
+          <div className="rounded-3xl border border-border bg-foreground/[0.03] p-6 md:p-10">
             <AnimatePresence mode="wait">
               {step === "segment" && (
                 <motion.div
@@ -297,7 +297,7 @@ export function DiagnosticQuizSection() {
                       <span>Compatibilidade com seu perfil</span>
                       <span className="text-primary">{matchScore}%</span>
                     </div>
-                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-foreground/10">
                       <motion.div
                         className="h-full rounded-full bg-primary"
                         initial={{ width: 0 }}
@@ -349,7 +349,7 @@ export function DiagnosticQuizSection() {
                   {secondary && (
                     <Link
                       href={`/solucoes/${secondary.slug}`}
-                      className="mx-auto mt-8 flex max-w-md items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 text-left text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
+                      className="mx-auto mt-8 flex max-w-md items-center gap-3 rounded-xl border border-border bg-foreground/[0.02] p-4 text-left text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
                     >
                       <IconBadge icon={SecondaryIcon} className="size-10 shrink-0 bg-primary/10" iconClassName="size-4" />
                       <span>

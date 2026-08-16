@@ -137,7 +137,7 @@ export function SolutionScreenshots({ solution }: { solution: Solution }) {
             onClick={() => scrollByStep(-1)}
             aria-label="Ver telas anteriores"
             disabled={!canScrollLeft}
-            className="absolute top-1/2 left-0 hidden size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground shadow-lg ring-1 ring-white/10 transition-opacity duration-200 hover:bg-muted md:flex disabled:pointer-events-none disabled:opacity-0"
+            className="absolute top-1/2 left-0 hidden size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground shadow-lg ring-1 ring-border transition-opacity duration-200 hover:bg-muted md:flex disabled:pointer-events-none disabled:opacity-0"
           >
             <ChevronLeft className="size-5" />
           </button>
@@ -146,7 +146,7 @@ export function SolutionScreenshots({ solution }: { solution: Solution }) {
             onClick={() => scrollByStep(1)}
             aria-label="Ver mais telas"
             disabled={!canScrollRight}
-            className="absolute top-1/2 right-0 hidden size-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground shadow-lg ring-1 ring-white/10 transition-opacity duration-200 hover:bg-muted md:flex disabled:pointer-events-none disabled:opacity-0"
+            className="absolute top-1/2 right-0 hidden size-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground shadow-lg ring-1 ring-border transition-opacity duration-200 hover:bg-muted md:flex disabled:pointer-events-none disabled:opacity-0"
           >
             <ChevronRight className="size-5" />
           </button>

@@ -136,6 +136,32 @@ export const instagramPosts = sqliteTable("instagram_posts", {
   ...timestamps,
 });
 
+export const portalClients = sqliteTable("portal_clients", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Só dígitos (sem pontuação), normalizado no cadastro e no login.
+  // .unique() já cria o índice necessário pra busca por CNPJ no login.
+  cnpj: text("cnpj").notNull().unique(),
+  razaoSocial: text("razao_social").notNull(),
+  // CH.Cliente.CHAVE — resolvido uma vez ao cadastrar, usado pra filtrar
+  // os títulos desse cliente (CHAVECLIFOR) nas consultas de contas a receber.
+  chaveCliente: integer("chave_cliente").notNull(),
+  passwordHash: text("password_hash").notNull(),
+  isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+  ...timestamps,
+});
+
+// Configuração da integração com a API IntegradorBI do CH, editada pelo
+// admin em vez de variável de ambiente — linha única (a mais recente por id).
+export const chApiSettings = sqliteTable("ch_api_settings", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  baseUrl: text("base_url").notNull(),
+  token: text("token").notNull(),
+  chaveEmpresa: text("chave_empresa").notNull(),
+  cnpjEstrutura: text("cnpj_estrutura").notNull(),
+  chaveContaBancaria: text("chave_conta_bancaria").notNull(),
+  ...timestamps,
+});
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   articles: many(articles),
   faqs: many(faqs),
@@ -178,3 +204,5 @@ export type User = typeof users.$inferSelect;
 export type Promotion = typeof promotions.$inferSelect;
 export type Update = typeof updates.$inferSelect;
 export type InstagramPost = typeof instagramPosts.$inferSelect;
+export type PortalClient = typeof portalClients.$inferSelect;
+export type ChApiSettings = typeof chApiSettings.$inferSelect;

@@ -370,7 +370,7 @@ export function MarkdownField({
             onDrop={handleDrop}
           />
           <div className="min-h-96 overflow-auto rounded-lg border border-border p-4">
-            <div className="prose prose-invert max-w-none prose-headings:font-heading prose-headings:font-medium prose-a:text-primary">
+            <div className="prose dark:prose-invert max-w-none prose-headings:font-heading prose-headings:font-medium prose-a:text-primary">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {value || "*Nada para pré-visualizar ainda.*"}
               </ReactMarkdown>

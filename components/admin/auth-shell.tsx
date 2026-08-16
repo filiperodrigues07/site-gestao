@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { TechGridBackground } from "@/components/shared/tech-grid-background";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 export function AuthShell({
   title,
@@ -16,6 +17,7 @@ export function AuthShell({
   return (
     <div className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-12">
       <TechGridBackground glow="center" />
+      <ThemeToggle className="absolute top-4 right-4" />
 
       <div className="w-full max-w-sm">
         <div className="flex justify-center">
@@ -24,7 +26,7 @@ export function AuthShell({
           </span>
         </div>
 
-        <div className="mt-8 rounded-2xl border border-white/10 bg-card/80 p-8 shadow-2xl shadow-black/40 backdrop-blur-sm">
+        <div className="mt-8 rounded-2xl border border-border bg-card/80 p-8 shadow-2xl shadow-black/40 backdrop-blur-sm">
           <h1 className="text-center font-heading text-xl font-medium">{title}</h1>
           <p className="mt-1.5 text-center text-sm text-muted-foreground text-pretty">
             {description}

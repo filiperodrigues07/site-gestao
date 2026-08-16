@@ -17,7 +17,7 @@ export function SolutionBenefits({ solution }: { solution: Solution }) {
           {solution.benefits.map((benefit) => (
             <Reveal
               key={benefit}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+              className="rounded-2xl border border-border bg-foreground/[0.03] p-6"
             >
               <Sparkles className="size-5 text-primary" strokeWidth={1.75} />
               <p className="mt-4 text-base font-medium">{benefit}</p>

@@ -15,6 +15,8 @@ import {
   Megaphone,
   Trophy,
   Newspaper,
+  UserRound,
+  Settings,
   LogOut,
   KeyRound,
   Menu,
@@ -24,6 +26,7 @@ import {
 } from "lucide-react";
 import { InstagramIcon } from "@/components/shared/social-icons";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/app/admin/actions";
 import type { AdminSection } from "@/lib/auth/permissions";
@@ -54,6 +57,23 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
       { href: "/admin/promocoes", label: "Promoções", icon: Megaphone, section: "promocoes" },
       { href: "/admin/novidades", label: "Novidades", icon: Newspaper, section: "novidades" },
       { href: "/admin/instagram", label: "Instagram", icon: InstagramIcon, section: "instagram" },
+    ],
+  },
+  {
+    label: "Área do cliente",
+    items: [
+      {
+        href: "/admin/configuracoes-ch",
+        label: "Configurações CH",
+        icon: Settings,
+        section: "portal-clientes",
+      },
+      {
+        href: "/admin/portal-clientes",
+        label: "Clientes",
+        icon: UserRound,
+        section: "portal-clientes",
+      },
     ],
   },
   {
@@ -163,15 +183,23 @@ export function SidebarNav({
   function renderFooter(showLabels: boolean) {
     return (
       <form action={logoutAction} className="border-t border-sidebar-border p-3">
-        <div className={cn("flex items-center gap-2.5 px-1 pb-2", !showLabels && "justify-center px-0")}>
-          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-brand-blue-700 text-[0.7rem] font-semibold text-white">
-            {initials(currentUserName)}
-          </span>
-          {showLabels && (
-            <p className="min-w-0 truncate text-xs text-sidebar-foreground/60">
-              <span className="block truncate font-medium text-sidebar-foreground">{currentUserName}</span>
-            </p>
+        <div
+          className={cn(
+            "flex items-center gap-2.5 px-1 pb-2",
+            showLabels ? "justify-between" : "justify-center"
           )}
+        >
+          <div className={cn("flex min-w-0 items-center gap-2.5", !showLabels && "justify-center")}>
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-brand-blue-700 text-[0.7rem] font-semibold text-white">
+              {initials(currentUserName)}
+            </span>
+            {showLabels && (
+              <p className="min-w-0 truncate text-xs text-sidebar-foreground/60">
+                <span className="block truncate font-medium text-sidebar-foreground">{currentUserName}</span>
+              </p>
+            )}
+          </div>
+          {showLabels && <ThemeToggle />}
         </div>
         <button
           type="submit"
