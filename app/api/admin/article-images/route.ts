@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getUserForApi } from "@/lib/auth/dal";
 import { hasPermission } from "@/lib/auth/permissions";
 import {
@@ -12,13 +12,24 @@ import {
 } from "@/lib/uploads/constants";
 import { processImageBuffer } from "@/lib/uploads/process-image";
 
-export async function POST(request: Request) {
-  const user = await getUserForApi();
-  if (!user) {
-    return NextResponse.json({ success: false, errors: { _form: ["Não autenticado"] } }, { status: 401 });
-  }
-  if (!hasPermission(user, "artigos")) {
-    return NextResponse.json({ success: false, errors: { _form: ["Sem permissão"] } }, { status: 403 });
+export async function POST(request: NextRequest) {
+  // Autenticação via X-API-Key (sistemas externos, ex.: RT HELPDESK) como
+  // alternativa à sessão de admin no navegador — mesmo mecanismo usado pelas
+  // rotas de /api/knowledge-base/*. Só entra nesse caminho se o header vier
+  // preenchido; sem o header, o fluxo de sessão abaixo continua idêntico.
+  const apiKey = request.headers.get("x-api-key");
+  if (apiKey) {
+    if (!process.env.KB_API_KEY || apiKey !== process.env.KB_API_KEY) {
+      return NextResponse.json({ success: false, errors: { _form: ["Não autorizado"] } }, { status: 401 });
+    }
+  } else {
+    const user = await getUserForApi();
+    if (!user) {
+      return NextResponse.json({ success: false, errors: { _form: ["Não autenticado"] } }, { status: 401 });
+    }
+    if (!hasPermission(user, "artigos")) {
+      return NextResponse.json({ success: false, errors: { _form: ["Sem permissão"] } }, { status: 403 });
+    }
   }
 
   const formData = await request.formData().catch(() => null);

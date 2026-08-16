@@ -20,6 +20,17 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/admin/login" || pathname === "/admin/trocar-senha") return NextResponse.next();
 
+  // Upload de imagem de artigo aceita X-API-Key (sistemas externos, ex.:
+  // RT HELPDESK) como alternativa à sessão — mesma chave usada pelas rotas
+  // /api/knowledge-base/*. Libera só esse endpoint específico, não o resto
+  // de /api/admin/*, que continua exigindo sessão normalmente.
+  if (pathname === "/api/admin/article-images") {
+    const apiKey = request.headers.get("x-api-key");
+    if (apiKey && process.env.KB_API_KEY && apiKey === process.env.KB_API_KEY) {
+      return NextResponse.next();
+    }
+  }
+
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const session = token ? await verifySessionToken(token) : null;
 
