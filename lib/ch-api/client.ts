@@ -129,13 +129,28 @@ async function chFetchList(path: string, explicitConfig?: ChApiConfig): Promise<
 
 // Endpoints de Pix (GerarCobrancaPIX, ConsultarCobrancaPIX) devolvem `result`
 // como um array contendo UM objeto direto: [ {...} ] (sem aninhamento extra).
-async function chFetchObject(path: string, method: "GET" | "POST" = "GET"): Promise<Record<string, unknown>> {
-  const result = await chFetch(path, method);
+async function chFetchObject(
+  path: string,
+  method: "GET" | "POST" = "GET",
+  explicitConfig?: ChApiConfig
+): Promise<Record<string, unknown>> {
+  const result = await chFetch(path, method, explicitConfig);
   const item = (result as unknown[])[0];
   if (!item || typeof item !== "object") {
     throw new ChApiError("Resposta inesperada do servidor CH.");
   }
-  return item as Record<string, unknown>;
+
+  // Erros de negócio (ex: chave Pix inválida) vêm com HTTP 200 e a mensagem
+  // dentro do próprio objeto — em inglês ("error") nos endpoints de Pix,
+  // em português ("erro") nos demais. Sem isso, o chamador só veria os
+  // campos esperados (RECORD/IDPIX etc.) faltando, sem saber o motivo real.
+  const record = item as Record<string, unknown>;
+  const motivo = record.error ?? record.erro;
+  if (typeof motivo === "string") {
+    throw new ChApiError(`O CH recusou a requisição: ${motivo}`);
+  }
+
+  return record;
 }
 
 function formatChDate(date: Date): string {

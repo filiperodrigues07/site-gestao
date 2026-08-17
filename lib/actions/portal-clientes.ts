@@ -9,7 +9,6 @@ import { portalClients } from "@/lib/db/schema";
 import { hashPassword } from "@/lib/auth/password";
 import { listarClientes, ChApiError, type ChCliente } from "@/lib/ch-api/client";
 import { normalizeCnpj } from "@/lib/portal/cnpj";
-import { SENHA_PADRAO_IMPORTACAO } from "@/lib/portal/constants";
 import {
   portalClientCreateSchema,
   portalClientUpdateSchema,
@@ -75,44 +74,6 @@ export async function updatePortalClient(id: number, values: PortalClientUpdateV
 
   revalidatePath("/admin/portal-clientes");
   redirect("/admin/portal-clientes");
-}
-
-export type ImportarClientesChResult =
-  | { imported: number; skipped: number; senhaPadrao: string }
-  | { error: string };
-
-// Traz todos os clientes do CH que ainda não têm acesso cadastrado, com a
-// senha padrão (lib/portal/constants.ts) e já ativos.
-export async function importarClientesChAction(): Promise<ImportarClientesChResult> {
-  await requirePermission("portal-clientes");
-
-  try {
-    const clientesCh = await listarClientes();
-    const existentes = await db.query.portalClients.findMany({ columns: { cnpj: true } });
-    const cnpjsExistentes = new Set(existentes.map((c) => c.cnpj));
-
-    let imported = 0;
-    for (const cliente of clientesCh) {
-      const cnpj = normalizeCnpj(cliente.CNPJCPF ?? "");
-      if (cnpj.length < 11 || cnpjsExistentes.has(cnpj)) continue;
-
-      await db.insert(portalClients).values({
-        cnpj,
-        razaoSocial: cliente.RAZAOSOCIAL,
-        chaveCliente: cliente.CHAVE,
-        passwordHash: hashPassword(SENHA_PADRAO_IMPORTACAO),
-        isActive: true,
-      });
-      cnpjsExistentes.add(cnpj);
-      imported += 1;
-    }
-
-    revalidatePath("/admin/portal-clientes");
-    return { imported, skipped: clientesCh.length - imported, senhaPadrao: SENHA_PADRAO_IMPORTACAO };
-  } catch (error) {
-    if (error instanceof ChApiError) return { error: error.message };
-    return { error: "Não foi possível importar os clientes do CH agora." };
-  }
 }
 
 export async function deletePortalClient(id: number) {

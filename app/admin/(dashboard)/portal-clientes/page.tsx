@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
-import { asc, like } from "drizzle-orm";
+import { and, asc, eq, like, or } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { AdminFilters } from "@/components/admin/admin-filters";
 import { ImportChClientsButton } from "@/components/admin/import-ch-clients-button";
-import { formatCnpj } from "@/lib/portal/cnpj";
+import { formatCnpj, normalizeCnpj } from "@/lib/portal/cnpj";
 import { SENHA_PADRAO_IMPORTACAO } from "@/lib/portal/constants";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
@@ -18,16 +18,30 @@ import { deletePortalClient } from "@/lib/actions/portal-clientes";
 export default async function AdminPortalClientesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; status?: string }>;
 }) {
   await requirePermission("portal-clientes");
-  const { q } = await searchParams;
+  const { q, status } = await searchParams;
+
+  const cnpjDigits = q ? normalizeCnpj(q) : "";
+  const searchCondition = q
+    ? cnpjDigits
+      ? or(like(portalClients.razaoSocial, `%${q}%`), like(portalClients.cnpj, `%${cnpjDigits}%`))
+      : like(portalClients.razaoSocial, `%${q}%`)
+    : undefined;
+  const statusCondition =
+    status === "ativo"
+      ? eq(portalClients.isActive, true)
+      : status === "inativo"
+        ? eq(portalClients.isActive, false)
+        : undefined;
+  const whereClauses = [searchCondition, statusCondition].filter((c) => c !== undefined);
 
   const rows = await db.query.portalClients.findMany({
-    where: q ? like(portalClients.razaoSocial, `%${q}%`) : undefined,
+    where: whereClauses.length > 0 ? and(...whereClauses) : undefined,
     orderBy: (c) => asc(c.razaoSocial),
   });
-  const hasFilters = Boolean(q);
+  const hasFilters = Boolean(q) || Boolean(status && status !== "all");
 
   return (
     <div>
@@ -53,7 +67,20 @@ export default async function AdminPortalClientesPage({
 
       <div className="mt-6">
         <Suspense>
-          <AdminFilters searchPlaceholder="Buscar por razão social..." />
+          <AdminFilters
+            searchPlaceholder="Buscar por razão social ou CNPJ..."
+            filters={[
+              {
+                param: "status",
+                label: "Status",
+                allLabel: "Status: todos",
+                options: [
+                  { value: "ativo", label: "Ativo" },
+                  { value: "inativo", label: "Inativo" },
+                ],
+              },
+            ]}
+          />
         </Suspense>
       </div>
 

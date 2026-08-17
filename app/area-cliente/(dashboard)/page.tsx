@@ -1,17 +1,12 @@
-import { AlertTriangle, CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AlertTriangle, CheckCircle2, Wallet, FileClock, AlertCircle } from "lucide-react";
 import { getCurrentPortalClient } from "@/lib/auth/portal-dal";
 import { isChApiConfigured } from "@/lib/ch-api/config";
 import { listarReceber, isTituloPendente, ChApiError, type ChTituloReceber } from "@/lib/ch-api/client";
 import { getReceberRange } from "@/lib/portal/receber-range";
-import { PixButton } from "@/components/portal/pix-button";
+import { TitulosList } from "@/components/portal/titulos-list";
 
 function formatCurrency(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-function formatDate(isoDate: string) {
-  return new Date(`${isoDate}T00:00:00`).toLocaleDateString("pt-BR");
 }
 
 function isAtrasado(vencimento: string) {
@@ -42,12 +37,43 @@ export default async function AreaClientePage() {
   const client = await getCurrentPortalClient();
   const { titulos, error } = await loadTitulosPendentes(client.chaveCliente);
 
+  const totalEmAberto = titulos.reduce((sum, t) => sum + t.VALOR, 0);
+  const atrasados = titulos.filter((t) => isAtrasado(t.VENCIMENTO));
+
   return (
     <div>
       <h1 className="font-heading text-2xl font-medium">Contas a receber</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Títulos em aberto de {client.razaoSocial} junto à Gestão.
       </p>
+
+      {!error && titulos.length > 0 && (
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Wallet className="size-4" />
+              Total em aberto
+            </div>
+            <p className="mt-2 font-heading text-2xl font-medium">{formatCurrency(totalEmAberto)}</p>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <FileClock className="size-4" />
+              Títulos em aberto
+            </div>
+            <p className="mt-2 font-heading text-2xl font-medium">{titulos.length}</p>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div
+              className={`flex items-center gap-2 text-sm ${atrasados.length > 0 ? "text-destructive" : "text-muted-foreground"}`}
+            >
+              <AlertCircle className="size-4" />
+              Atrasados
+            </div>
+            <p className="mt-2 font-heading text-2xl font-medium">{atrasados.length}</p>
+          </div>
+        </div>
+      )}
 
       <div className="mt-8">
         {error && (
@@ -64,41 +90,7 @@ export default async function AreaClientePage() {
           </div>
         )}
 
-        {!error && titulos.length > 0 && (
-          <ul className="space-y-3">
-            {titulos.map((titulo) => (
-              <li
-                key={titulo.CHAVE}
-                className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div>
-                  <p className="font-medium">
-                    Documento {titulo.DOCUMENTO}
-                    {titulo.TOTPARC > 1 ? ` — parcela ${titulo.PARCELA}/${titulo.TOTPARC}` : ""}
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">{titulo.DESCRICAO}</p>
-                  <p
-                    className={cn(
-                      "mt-1 text-sm",
-                      isAtrasado(titulo.VENCIMENTO) ? "text-destructive" : "text-muted-foreground"
-                    )}
-                  >
-                    Vencimento {formatDate(titulo.VENCIMENTO)}
-                    {isAtrasado(titulo.VENCIMENTO) ? " — atrasado" : ""}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4 sm:flex-col sm:items-end sm:gap-2">
-                  <p className="font-heading text-lg font-medium">{formatCurrency(titulo.VALOR)}</p>
-                  <PixButton
-                    tituloChave={titulo.CHAVE}
-                    documento={titulo.DOCUMENTO}
-                    valorLabel={formatCurrency(titulo.VALOR)}
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        {!error && titulos.length > 0 && <TitulosList titulos={titulos} />}
       </div>
     </div>
   );
