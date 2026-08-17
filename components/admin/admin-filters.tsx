@@ -38,6 +38,9 @@ export function AdminFilters({
 
   function updateParams(next: Record<string, string | null>) {
     const params = new URLSearchParams(searchParams.toString());
+    // Mudou um filtro, volta pra página 1 — senão o usuário pode ficar numa
+    // página que não existe mais pra um resultado filtrado menor.
+    params.delete("page");
     for (const [key, value] of Object.entries(next)) {
       if (value && value !== "all") params.set(key, value);
       else params.delete(key);
