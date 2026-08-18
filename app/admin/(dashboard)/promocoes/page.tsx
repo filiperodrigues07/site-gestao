@@ -1,11 +1,13 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { asc, like } from "drizzle-orm";
+import { asc, count, like } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { AdminFilters } from "@/components/admin/admin-filters";
+import { ADMIN_PAGE_SIZE, parsePage, buildAdminHref } from "@/lib/admin/pagination";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { promotions } from "@/lib/db/schema";
@@ -14,15 +16,24 @@ import { deletePromotion } from "@/lib/actions/promocoes";
 export default async function AdminPromocoesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string }>;
 }) {
   await requirePermission("promocoes");
-  const { q } = await searchParams;
+  const { q, page: pageParam } = await searchParams;
+  const page = parsePage(pageParam);
+  const whereClause = q ? like(promotions.title, `%${q}%`) : undefined;
 
-  const rows = await db.query.promotions.findMany({
-    where: q ? like(promotions.title, `%${q}%`) : undefined,
-    orderBy: (p) => asc(p.createdAt),
-  });
+  const [rows, [{ total }]] = await Promise.all([
+    db.query.promotions.findMany({
+      where: whereClause,
+      orderBy: (p) => asc(p.createdAt),
+      limit: ADMIN_PAGE_SIZE,
+      offset: (page - 1) * ADMIN_PAGE_SIZE,
+    }),
+    db.select({ total: count() }).from(promotions).where(whereClause),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / ADMIN_PAGE_SIZE));
+  const buildHref = (targetPage: number) => buildAdminHref("/admin/promocoes", { q }, targetPage);
   const hasFilters = Boolean(q);
 
   return (
@@ -31,7 +42,7 @@ export default async function AdminPromocoesPage({
         <div>
           <h1 className="font-heading text-2xl font-medium">Promoções</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {rows.length} imagens no carrossel da home — aparecem na ordem de cadastro, antes da seção
+            {total} imagens no carrossel da home — aparecem na ordem de cadastro, antes da seção
             &quot;Sobre a Gestão&quot;.
           </p>
         </div>
@@ -81,6 +92,8 @@ export default async function AdminPromocoesPage({
           }
         />
       </div>
+
+      <AdminPagination page={page} totalPages={totalPages} buildHref={buildHref} />
     </div>
   );
 }

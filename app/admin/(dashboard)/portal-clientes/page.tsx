@@ -1,45 +1,21 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { Plus, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import { and, asc, count, eq, like, or } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AdminList } from "@/components/admin/admin-list";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { AdminFilters } from "@/components/admin/admin-filters";
 import { ImportChClientsButton } from "@/components/admin/import-ch-clients-button";
+import { ADMIN_PAGE_SIZE, parsePage, buildAdminHref } from "@/lib/admin/pagination";
 import { formatCnpj, normalizeCnpj } from "@/lib/portal/cnpj";
 import { SENHA_PADRAO_IMPORTACAO } from "@/lib/portal/constants";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { portalClients } from "@/lib/db/schema";
 import { deletePortalClient } from "@/lib/actions/portal-clientes";
-
-const PAGE_SIZE = 50;
-
-function PagerLink({
-  href,
-  disabled,
-  children,
-}: {
-  href: string;
-  disabled: boolean;
-  children: ReactNode;
-}) {
-  if (disabled) {
-    return (
-      <span className="inline-flex h-8 cursor-not-allowed items-center gap-1.5 rounded-lg border border-border px-2.5 text-sm text-muted-foreground/50">
-        {children}
-      </span>
-    );
-  }
-  return (
-    <Button type="button" variant="outline" size="sm" nativeButton={false} render={<Link href={href} />}>
-      {children}
-    </Button>
-  );
-}
 
 export default async function AdminPortalClientesPage({
   searchParams,
@@ -48,7 +24,7 @@ export default async function AdminPortalClientesPage({
 }) {
   await requirePermission("portal-clientes");
   const { q, status, page: pageParam } = await searchParams;
-  const page = Math.max(1, Number(pageParam) || 1);
+  const page = parsePage(pageParam);
 
   const cnpjDigits = q ? normalizeCnpj(q) : "";
   const searchCondition = q
@@ -73,21 +49,14 @@ export default async function AdminPortalClientesPage({
     db.query.portalClients.findMany({
       where: whereClause,
       orderBy: (c) => asc(c.razaoSocial),
-      limit: PAGE_SIZE,
-      offset: (page - 1) * PAGE_SIZE,
+      limit: ADMIN_PAGE_SIZE,
+      offset: (page - 1) * ADMIN_PAGE_SIZE,
     }),
     db.select({ total: count() }).from(portalClients).where(whereClause),
   ]);
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
-  function buildHref(targetPage: number) {
-    const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    if (status) params.set("status", status);
-    if (targetPage > 1) params.set("page", String(targetPage));
-    const qs = params.toString();
-    return qs ? `/admin/portal-clientes?${qs}` : "/admin/portal-clientes";
-  }
+  const totalPages = Math.max(1, Math.ceil(total / ADMIN_PAGE_SIZE));
+  const buildHref = (targetPage: number) =>
+    buildAdminHref("/admin/portal-clientes", { q, status }, targetPage);
 
   return (
     <div>
@@ -171,23 +140,7 @@ export default async function AdminPortalClientesPage({
         />
       </div>
 
-      {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Página {page} de {totalPages}
-          </p>
-          <div className="flex items-center gap-2">
-            <PagerLink href={buildHref(page - 1)} disabled={page <= 1}>
-              <ChevronLeft className="size-4" />
-              Anterior
-            </PagerLink>
-            <PagerLink href={buildHref(page + 1)} disabled={page >= totalPages}>
-              Próxima
-              <ChevronRight className="size-4" />
-            </PagerLink>
-          </div>
-        </div>
-      )}
+      <AdminPagination page={page} totalPages={totalPages} buildHref={buildHref} />
     </div>
   );
 }

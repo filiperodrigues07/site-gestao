@@ -8,8 +8,8 @@ export type ChApiConfig = {
   chaveContaBancaria: string;
 };
 
-// Configurado pelo admin em /admin/configuracoes-ch (tabela ch_api_settings),
-// não por variável de ambiente — o servidor CH é da própria Gestão e o admin
+// Configurado pelo admin em /admin/integracoes (tabela ch_api_settings), não
+// por variável de ambiente — o servidor CH é da própria Gestão e o admin
 // prefere trocar esses dados sem precisar de deploy.
 async function getSettingsRow() {
   return db.query.chApiSettings.findFirst({ orderBy: (t, { desc }) => desc(t.id) });
@@ -28,7 +28,7 @@ export async function getChApiConfig(): Promise<ChApiConfig> {
   const row = await getSettingsRow();
 
   if (!row?.baseUrl || !row?.token || !row?.chaveEmpresa || !row?.cnpjEstrutura || !row?.chaveContaBancaria) {
-    throw new Error("API do CH não configurada — preencha os dados em Admin > Configurações CH.");
+    throw new Error("API do CH não configurada — preencha os dados em Admin > Integrações.");
   }
 
   return {

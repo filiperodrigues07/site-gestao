@@ -1,13 +1,15 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
-import { and, asc, desc, like, or, eq } from "drizzle-orm";
+import { and, asc, count, desc, like, or, eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { DuplicateButton } from "@/components/admin/duplicate-button";
 import { AdminFilters } from "@/components/admin/admin-filters";
+import { ADMIN_PAGE_SIZE, parsePage, buildAdminHref } from "@/lib/admin/pagination";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { articles } from "@/lib/db/schema";
@@ -16,25 +18,33 @@ import { deleteArticle, duplicateArticle } from "./actions";
 export default async function AdminArtigosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string; categoria?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; categoria?: string; page?: string }>;
 }) {
   await requirePermission("artigos");
-  const { q, status, categoria } = await searchParams;
+  const { q, status, categoria, page: pageParam } = await searchParams;
+  const page = parsePage(pageParam);
 
   const categoryId = categoria ? Number(categoria) : undefined;
   const conditions = [];
   if (q) conditions.push(or(like(articles.title, `%${q}%`), like(articles.excerpt, `%${q}%`)));
   if (status === "draft" || status === "published") conditions.push(eq(articles.status, status));
   if (categoryId && Number.isInteger(categoryId)) conditions.push(eq(articles.categoryId, categoryId));
+  const whereClause = conditions.length ? and(...conditions) : undefined;
 
-  const [rows, categories] = await Promise.all([
+  const [rows, [{ total }], categories] = await Promise.all([
     db.query.articles.findMany({
-      where: conditions.length ? and(...conditions) : undefined,
+      where: whereClause,
       orderBy: (a) => desc(a.updatedAt),
       with: { category: true, author: true },
+      limit: ADMIN_PAGE_SIZE,
+      offset: (page - 1) * ADMIN_PAGE_SIZE,
     }),
+    db.select({ total: count() }).from(articles).where(whereClause),
     db.query.categories.findMany({ orderBy: (c) => asc(c.name) }),
   ]);
+  const totalPages = Math.max(1, Math.ceil(total / ADMIN_PAGE_SIZE));
+  const buildHref = (targetPage: number) =>
+    buildAdminHref("/admin/artigos", { q, status, categoria }, targetPage);
   const hasFilters = Boolean(q || status || categoria);
 
   return (
@@ -42,7 +52,7 @@ export default async function AdminArtigosPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-medium">Artigos</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{rows.length} artigos cadastrados</p>
+          <p className="mt-1 text-sm text-muted-foreground">{total} artigos cadastrados</p>
         </div>
         <Button nativeButton={false} render={<Link href="/admin/artigos/novo" />}>
           <Plus className="size-4" />
@@ -118,6 +128,8 @@ export default async function AdminArtigosPage({
           }
         />
       </div>
+
+      <AdminPagination page={page} totalPages={totalPages} buildHref={buildHref} />
     </div>
   );
 }

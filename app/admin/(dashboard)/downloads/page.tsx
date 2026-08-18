@@ -1,12 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
-import { and, desc, eq, like } from "drizzle-orm";
+import { and, count, desc, eq, like } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminList } from "@/components/admin/admin-list";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { AdminFilters } from "@/components/admin/admin-filters";
+import { ADMIN_PAGE_SIZE, parsePage, buildAdminHref } from "@/lib/admin/pagination";
 import { requirePermission } from "@/lib/auth/dal";
 import { db } from "@/lib/db/client";
 import { downloads } from "@/lib/db/schema";
@@ -22,21 +24,30 @@ function formatSize(bytes: number): string {
 export default async function AdminDownloadsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; type?: string }>;
+  searchParams: Promise<{ q?: string; type?: string; page?: string }>;
 }) {
   await requirePermission("downloads");
-  const { q, type } = await searchParams;
+  const { q, type, page: pageParam } = await searchParams;
+  const page = parsePage(pageParam);
 
   const conditions = [];
   if (q) conditions.push(like(downloads.title, `%${q}%`));
   if (type && (DOWNLOAD_FILE_TYPES as readonly string[]).includes(type)) {
     conditions.push(eq(downloads.fileType, type as (typeof DOWNLOAD_FILE_TYPES)[number]));
   }
+  const whereClause = conditions.length ? and(...conditions) : undefined;
 
-  const rows = await db.query.downloads.findMany({
-    where: conditions.length ? and(...conditions) : undefined,
-    orderBy: (d) => desc(d.createdAt),
-  });
+  const [rows, [{ total }]] = await Promise.all([
+    db.query.downloads.findMany({
+      where: whereClause,
+      orderBy: (d) => desc(d.createdAt),
+      limit: ADMIN_PAGE_SIZE,
+      offset: (page - 1) * ADMIN_PAGE_SIZE,
+    }),
+    db.select({ total: count() }).from(downloads).where(whereClause),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / ADMIN_PAGE_SIZE));
+  const buildHref = (targetPage: number) => buildAdminHref("/admin/downloads", { q, type }, targetPage);
   const hasFilters = Boolean(q || type);
 
   return (
@@ -44,7 +55,7 @@ export default async function AdminDownloadsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-medium">Downloads</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{rows.length} arquivos cadastrados</p>
+          <p className="mt-1 text-sm text-muted-foreground">{total} arquivos cadastrados</p>
         </div>
         <Button nativeButton={false} render={<Link href="/admin/downloads/novo" />}>
           <Plus className="size-4" />
@@ -96,6 +107,8 @@ export default async function AdminDownloadsPage({
           }
         />
       </div>
+
+      <AdminPagination page={page} totalPages={totalPages} buildHref={buildHref} />
     </div>
   );
 }

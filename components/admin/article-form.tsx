@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MarkdownField } from "@/components/admin/markdown-field";
+import { ImportArticleFromUrlDialog } from "@/components/admin/import-article-from-url-dialog";
 import { articleSchema, type ArticleFormValues } from "@/lib/validations/admin/article-schema";
 import { createArticle, updateArticle } from "@/app/admin/(dashboard)/artigos/actions";
 import type { Article, Category } from "@/lib/db/schema";
@@ -26,6 +27,7 @@ export function ArticleForm({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema),
@@ -54,8 +56,19 @@ export function ArticleForm({
     router.push("/admin/artigos");
   }
 
+  function handleImported(data: { title: string; slug: string; excerpt: string; content: string }) {
+    setValue("title", data.title, { shouldValidate: true, shouldDirty: true });
+    setValue("slug", data.slug, { shouldValidate: true, shouldDirty: true });
+    setValue("excerpt", data.excerpt, { shouldValidate: true, shouldDirty: true });
+    setValue("content", data.content, { shouldValidate: true, shouldDirty: true });
+  }
+
   return (
     <div className="max-w-3xl space-y-5">
+      <div className="flex justify-end">
+        <ImportArticleFromUrlDialog onImported={handleImported} />
+      </div>
+
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <Label htmlFor="title">Título</Label>

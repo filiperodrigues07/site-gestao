@@ -33,7 +33,7 @@ export async function updateChApiSettings(values: ChApiSettingsValues) {
     await db.insert(chApiSettings).values(parsed.data);
   }
 
-  revalidatePath("/admin/configuracoes-ch");
+  revalidatePath("/admin/integracoes");
   return { success: true };
 }
 

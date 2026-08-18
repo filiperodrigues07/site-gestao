@@ -16,7 +16,7 @@ import {
   Trophy,
   Newspaper,
   UserRound,
-  Settings,
+  Plug,
   LogOut,
   KeyRound,
   Menu,
@@ -63,9 +63,9 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
     label: "Área do cliente",
     items: [
       {
-        href: "/admin/configuracoes-ch",
-        label: "Configurações CH",
-        icon: Settings,
+        href: "/admin/integracoes",
+        label: "Integrações",
+        icon: Plug,
         section: "portal-clientes",
       },
       {

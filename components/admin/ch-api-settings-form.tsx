@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { PlugZap, Search } from "lucide-react";
+import { PlugZap, Search, Eye, EyeOff, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,7 @@ export function ChApiSettingsForm({ settings }: { settings?: ChApiSettings }) {
   const [isTesting, startTest] = useTransition();
   const [isBuscandoContas, startBuscarContas] = useTransition();
   const [contas, setContas] = useState<ChContaBancaria[] | null>(null);
+  const [showToken, setShowToken] = useState(false);
   const {
     register,
     handleSubmit,
@@ -90,6 +91,13 @@ export function ChApiSettingsForm({ settings }: { settings?: ChApiSettings }) {
     toast.success(`Conta selecionada: ${conta.DESCRICAO}`);
   }
 
+  async function handleCopyToken() {
+    const value = getValues("token");
+    if (!value) return;
+    await navigator.clipboard.writeText(value);
+    toast.success("Token copiado");
+  }
+
   return (
     <div className="max-w-lg space-y-5">
       <div>
@@ -108,7 +116,31 @@ export function ChApiSettingsForm({ settings }: { settings?: ChApiSettings }) {
 
       <div>
         <Label htmlFor="token">X-Token</Label>
-        <Input id="token" className="mt-2" {...register("token")} />
+        <div className="relative mt-2">
+          <Input id="token" type={showToken ? "text" : "password"} className="pr-20" {...register("token")} />
+          <div className="absolute top-1/2 right-1 flex -translate-y-1/2 items-center gap-0.5">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setShowToken((v) => !v)}
+              aria-label={showToken ? "Ocultar token" : "Mostrar token"}
+              title={showToken ? "Ocultar token" : "Mostrar token"}
+            >
+              {showToken ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={handleCopyToken}
+              aria-label="Copiar token"
+              title="Copiar token"
+            >
+              <Copy className="size-3.5" />
+            </Button>
+          </div>
+        </div>
         <p className="mt-1.5 text-sm text-muted-foreground">
           Gerado em CHServer &gt; Configurações &gt; Integrador BI.
         </p>
