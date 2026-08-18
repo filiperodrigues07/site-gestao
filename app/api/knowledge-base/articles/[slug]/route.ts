@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db/client";
-import { articles, categories } from "@/lib/db/schema";
+import { articles, categories, users } from "@/lib/db/schema";
 import { requireApiKey, serializeArticle, siteUrl } from "@/lib/knowledge-base/api";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
@@ -11,7 +11,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (unauthorized) return unauthorized;
 
   const { slug } = await params;
-  const article = await db.query.articles.findFirst({ where: eq(articles.slug, slug), with: { category: true } });
+  const article = await db.query.articles.findFirst({
+    where: eq(articles.slug, slug),
+    with: { category: true, author: true },
+  });
   if (!article) {
     return NextResponse.json({ success: false, error: "Artigo não encontrado" }, { status: 404 });
   }
@@ -60,13 +63,16 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (parsed.data.tags !== undefined) updateData.tags = parsed.data.tags;
 
   const [updated] = await db.update(articles).set(updateData).where(eq(articles.id, existing.id)).returning();
-  const category = await db.query.categories.findFirst({ where: eq(categories.id, updated.categoryId) });
+  const [category, author] = await Promise.all([
+    db.query.categories.findFirst({ where: eq(categories.id, updated.categoryId) }),
+    updated.authorId ? db.query.users.findFirst({ where: eq(users.id, updated.authorId) }) : null,
+  ]);
 
   revalidatePath("/base-de-conhecimento");
   revalidatePath(`/base-de-conhecimento/artigos/${slug}`);
   if (slug !== updated.slug) revalidatePath(`/base-de-conhecimento/artigos/${updated.slug}`);
 
-  return NextResponse.json({ success: true, data: serializeArticle({ ...updated, category }, siteUrl()) });
+  return NextResponse.json({ success: true, data: serializeArticle({ ...updated, category, author }, siteUrl()) });
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   const rows = await db.query.articles.findMany({
     where: conditions.length ? and(...conditions) : undefined,
     orderBy: (a) => desc(a.updatedAt),
-    with: { category: true },
+    with: { category: true, author: true },
   });
 
   const base = siteUrl();

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { Article, Category } from "@/lib/db/schema";
+import type { Article, Category, User } from "@/lib/db/schema";
 
 // Autenticação e helpers compartilhados pela API de artigos consumida por
 // sistemas externos (ex.: RT HELPDESK) via header X-API-Key.
@@ -30,7 +30,10 @@ export function slugify(input: string): string {
   return slug || "artigo";
 }
 
-export function serializeArticle(article: Article & { category?: Category | null }, base: string) {
+export function serializeArticle(
+  article: Article & { category?: Category | null; author?: User | null },
+  base: string,
+) {
   return {
     id: article.slug,
     title: article.title,
@@ -39,6 +42,7 @@ export function serializeArticle(article: Article & { category?: Category | null
     status: article.status,
     categoryId: article.categoryId,
     category: article.category?.name,
+    author: article.author?.name,
     tags: article.tags,
     url: `${base}/base-de-conhecimento/artigos/${article.slug}`,
     updatedAt: article.updatedAt,
