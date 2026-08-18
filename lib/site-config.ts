@@ -28,7 +28,8 @@ export const siteConfig = {
     whatsappNumber: "5549991106297", // E.164 sem "+", usado nos links wa.me
     email: "contato@gestaoconsultorias.com.br",
     address: {
-      street: "Av. Barão do Rio Branco, 104 - Ed. Prime Offices, sala 1004",
+      street: "Av. Barão do Rio Branco, 104",
+      complement: "Ed. Prime Offices, sala 1004",
       city: "Joaçaba",
       state: "SC",
       zip: "", // TODO: preencher quando o CEP for confirmado

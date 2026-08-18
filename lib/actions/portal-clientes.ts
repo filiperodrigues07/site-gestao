@@ -68,7 +68,7 @@ export async function updatePortalClient(id: number, values: PortalClientUpdateV
     .update(portalClients)
     .set({
       isActive,
-      ...(password ? { passwordHash: hashPassword(password) } : {}),
+      ...(password ? { passwordHash: hashPassword(password), mustChangePassword: true } : {}),
     })
     .where(eq(portalClients.id, id));
 

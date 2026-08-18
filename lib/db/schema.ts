@@ -146,6 +146,9 @@ export const portalClients = sqliteTable("portal_clients", {
   // os títulos desse cliente (CHAVECLIFOR) nas consultas de contas a receber.
   chaveCliente: integer("chave_cliente").notNull(),
   passwordHash: text("password_hash").notNull(),
+  // Verdadeiro sempre que a senha atual foi definida pelo admin (cadastro,
+  // importação em massa ou redefinição) — força a troca no próximo login.
+  mustChangePassword: integer("must_change_password", { mode: "boolean" }).notNull().default(true),
   isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
   ...timestamps,
 });

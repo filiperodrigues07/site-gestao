@@ -74,6 +74,8 @@ export function ContactInfoCard() {
           <p className="font-medium">
             {contact.address.street}
             <br />
+            {contact.address.complement}
+            <br />
             {contact.address.city} - {contact.address.state}
             {contact.address.zip && (
               <>

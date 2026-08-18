@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/sections/home/hero-section";
-import { PromotionsCarousel } from "@/components/sections/home/promotions-carousel";
+// Banner de promoções ocultado a pedido — imagens não ficaram boas nessa
+// dimensão. Componente mantido no projeto, só não é renderizado aqui.
+// import { PromotionsCarousel } from "@/components/sections/home/promotions-carousel";
 import { AboutSection } from "@/components/sections/home/about-section";
 // Seção "Soluções" da home ocultada por ser redundante com a página /solucoes —
 // componente mantido no projeto, só não é renderizado aqui.
@@ -21,9 +23,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const promotions = await db.query.promotions.findMany({
-    orderBy: (p, { asc }) => asc(p.createdAt),
-  });
   const updates = await db.query.updates.findMany({
     orderBy: (u, { desc }) => desc(u.createdAt),
     limit: 6,
@@ -36,7 +35,6 @@ export default async function Home() {
   return (
     <>
       <HeroSection />
-      <PromotionsCarousel promotions={promotions} />
       <AboutSection />
       <DiagnosticQuizSection />
       <WeeklyUpdatesSection updates={updates} />

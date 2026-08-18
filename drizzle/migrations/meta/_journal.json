@@ -71,6 +71,13 @@
       "when": 1786752891007,
       "tag": "0009_loose_lockheed",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1787057820650,
+      "tag": "0010_needy_goblin_queen",
+      "breakpoints": true
     }
   ]
 }
