@@ -36,9 +36,14 @@ export async function createArticle(values: ArticleFormValues) {
 }
 
 export async function updateArticle(id: number, previousSlug: string, values: ArticleFormValues) {
-  await requirePermission("artigos");
+  const user = await requirePermission("artigos");
   const parsed = articleSchema.safeParse(values);
   if (!parsed.success) return { error: "Dados inválidos" };
+
+  // Artigos sem autor (ex.: importados via API) passam a ficar atribuídos a
+  // quem primeiro os editar pelo admin. Um artigo que já tem autor mantém o
+  // autor original — editar não deve "roubar" a autoria de outra pessoa.
+  const existing = await db.query.articles.findFirst({ where: eq(articles.id, id) });
 
   try {
     await db
@@ -47,6 +52,7 @@ export async function updateArticle(id: number, previousSlug: string, values: Ar
         ...parsed.data,
         tags: splitTags(parsed.data.tags),
         updatedAt: new Date().toISOString(),
+        ...(existing?.authorId ? {} : { authorId: user.id }),
       })
       .where(eq(articles.id, id));
   } catch {
